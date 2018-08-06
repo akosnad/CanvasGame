@@ -22,6 +22,11 @@
     <Exec Command="npx bower --allow-root install" />
   </Target>
 
+  <Target Name="CompileTypescript" BeforeTargets="BeforeBuild">
+    <Message Text="Compiling Typescript..." Importance="high"></Message>
+    <Exec Command="npx tsc"/>
+  </Target>
+
   <Target Name="GulpTask" BeforeTargets="BeforeBuild">
     <Message Text="Running gulp tasks..." Importance="high"></Message>
     <Exec Command="npx gulp" />

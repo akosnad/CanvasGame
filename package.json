@@ -6,6 +6,8 @@
     "bower": "^1.8.4",
     "gulp": "^3.9.1",
     "gulp-coffee": "^3.0.2",
-    "gulp-pug": "^4.0.1"
+    "gulp-pug": "^4.0.1",
+    "typescript": "^3.0.1",
+    "@types/jquery": "^3.3.5"
   }
 }
