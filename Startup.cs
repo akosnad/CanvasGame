@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CanvasGame
@@ -25,9 +27,14 @@ namespace CanvasGame
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Run(async (context) =>
+            app.UseRewriter(new RewriteOptions().AddRewrite(@"^$", "index.html", true));
+
+            var provider = new FileExtensionContentTypeProvider();
+            // provider.Mappings[".pde"] = "text/plain";
+
+            app.UseStaticFiles(new StaticFileOptions
             {
-                await context.Response.WriteAsync("Hello World!");
+                ContentTypeProvider = provider
             });
         }
     }

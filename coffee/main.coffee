@@ -1,4 +1,4 @@
-init() ->
+initialize() ->
     canvas = document.getElementById("gameCanvas")
     ctx = canvas.getContext("2d")
     window.addEventListener('resize', resizeCanvas, false)
@@ -12,5 +12,5 @@ resizeCanvas = () ->
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
 
-$ -> init()
+$ -> initialize()
 
