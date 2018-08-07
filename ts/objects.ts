@@ -119,34 +119,41 @@ namespace CanvasGame {
         left = 37,
         right = 39,
         up = 38,
-        down = 40
+        down = 40,
     }
+    
+    var PauseKeyCode = 27; // Esc
 
     export class Game {
         private gameSprites: Array<Sprite> = new Array<Sprite>();
         private player: Player;
         private lastUpdate: number;
-        private canvas: any;
-        private ctx: any;
+        public isPaused = false;
+        private canvas: HTMLCanvasElement;
+        private ctx: CanvasRenderingContext2D;
         constructor(player: Player) {
             this.canvas = document.createElement("canvas");
             var self = this;
             $(() => {
                 document.body.appendChild(self.canvas);
             });
-            this.ctx = this.canvas.getContext("2d");
+            this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
             self = this;
             window.addEventListener('resize', () => {
                 self.resizeCanvas()
             }, false);
             this.resizeCanvas();
+            self = this;
+            window.addEventListener('keypress', (e) => {
+                if(e.keyCode == PauseKeyCode) {self.isPaused = !self.isPaused;}
+            });
 
             this.player = player;
             this.reset();
             this.lastUpdate = Date.now();
         }
         resizeCanvas() {
-            this.ctx = this.canvas.getContext("2d");
+            this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
             this.ctx.canvas.width = window.innerWidth;
             this.ctx.canvas.height = window.innerHeight;
         }
@@ -160,21 +167,29 @@ namespace CanvasGame {
             var now = Date.now();
             var delta = now - this.lastUpdate;
             delta = delta / 1000;
-
-            this.gameSprites.forEach(sprite => {
-                sprite.tick(delta);
-            });
-            this.player.tick(delta);
-
+            if (!this.isPaused) {
+                // Tick sprites
+                this.gameSprites.forEach(sprite => {
+                    sprite.tick(delta);
+                });
+                this.player.tick(delta);
+            }
             // Clear canvas
             this.ctx.fillStyle = "#000000";
             this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-
+            // Draw sprites
             this.gameSprites.forEach(sprite => {
                 sprite.draw(this.ctx);
             });
             this.player.draw(this.ctx);
 
+            if (this.isPaused) {
+                this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
+                this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+                this.ctx.fillStyle = "#FFFFFF"
+                this.ctx.font = "30px Arial";
+                this.ctx.fillText("Paused", this.ctx.canvas.width / 2, this.ctx.canvas.height / 2);
+            }
             this.lastUpdate = now;
             window.requestAnimationFrame(() => { this.gameLoop(); });
         }
