@@ -119,9 +119,11 @@ namespace CanvasGame {
 
     export class OtherPlayer extends Sprite {
         id: number;
+        lastUpdateTimestamp: number;
         constructor(imageSource: string, playerData: MultiPlayerData) {
             super(imageSource, 0, 0);
             this.id = playerData.id;
+            this.lastUpdateTimestamp = playerData.lastUpdateTimestamp;
         }
     }
 
