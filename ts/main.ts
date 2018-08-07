@@ -5,4 +5,9 @@ let gameLoop = () => {
   window.requestAnimationFrame(gameLoop);
 }
 
-$(() => { gameLoop(); });
+$(() => { 
+  var monster = new Sprite("/img/monster.png");
+  monster.x = 500;
+  game.addSprite(monster);
+  gameLoop();
+});

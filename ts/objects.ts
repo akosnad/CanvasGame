@@ -41,7 +41,7 @@ class Sprite {
 class LivingSprite extends Sprite {
     xVelocity = 0;
     yVelocity = 0;
-    xVelocityMax = 250;
+    xVelocityMax = 255;
     xVelocityIncrease = 30;
     xVelocityDecrease = 15;
     gravity = 15;
@@ -166,7 +166,7 @@ class Game {
             sprite.draw(self.ctx);
         });
         self.player.draw(self.ctx);
-        
+
         self.lastUpdate = now;
         return self;
     }
