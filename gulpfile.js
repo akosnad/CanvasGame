@@ -14,8 +14,8 @@ gulp.task('build-pug', function() {
 });
 
 gulp.task('copy-dist', function () {
-    gulp.src('./bower_components/jquery/dist/jquery.min.js')
+    gulp.src('./node_modules/jquery/dist/jquery.min.js')
         .pipe(gulp.dest('./wwwroot/lib/js/'));
-    //gulp.src('./bower_components/requirejs/require.js')
-    //    .pipe(gulp.dest('./wwwroot/lib/js/'))
+    gulp.src('./node_modules/@aspnet/signalr/dist/browser/signalr.min.js')
+        .pipe(gulp.dest('./wwwroot/lib/js'));
 });

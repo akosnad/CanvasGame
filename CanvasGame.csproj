@@ -17,11 +17,6 @@
     <Exec Command="npm install" />
   </Target>
 
-  <Target Name="BowerRestore" BeforeTargets="BeforeBuild">
-    <Message Text="Installing Bower components..." Importance="high"></Message>
-    <Exec Command="npx bower --allow-root install" />
-  </Target>
-
   <Target Name="CompileTypescript" BeforeTargets="BeforeBuild">
     <Message Text="Compiling Typescript..." Importance="high"></Message>
     <Exec Command="npx tsc"/>

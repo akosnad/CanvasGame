@@ -1,8 +1,0 @@
-{
-    "name": "canvasgame",
-    "private": true,
-    "dependencies": {
-        "jquery": "latest"
-    }
-}
-  
