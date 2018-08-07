@@ -117,6 +117,16 @@ namespace CanvasGame {
         }
     }
 
+    export class OtherPlayer extends Sprite {
+        id: number;
+        constructor(imageSource: string, playerData: MultiPlayerData) {
+            super(imageSource, 0, 0);
+            this.id = playerData.id;
+        }
+    }
+
+    export var otherPlayers = new Array<OtherPlayer>();
+
     export enum MovingDirections {
         left = 37,
         right = 39,
@@ -167,6 +177,10 @@ namespace CanvasGame {
             });
             this.player.reset();
         }
+        start() {
+            this.multi.start();
+            this.gameLoop();
+        }
         gameLoop() {
             var now = Date.now();
             var delta = now - this.lastUpdate;
@@ -185,8 +199,12 @@ namespace CanvasGame {
             this.gameSprites.forEach(sprite => {
                 sprite.draw(this.ctx);
             });
+            // Draw other players
+            otherPlayers.forEach(player => {
+                player.draw(this.ctx);
+            });
+            // Draw our player
             this.player.draw(this.ctx);
-
             if (this.isPaused) {
                 this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
                 this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -194,6 +212,7 @@ namespace CanvasGame {
                 this.ctx.font = "30px Arial";
                 this.ctx.fillText("Paused", this.ctx.canvas.width / 2, this.ctx.canvas.height / 2);
             }
+            this.multi.sendPlayerData(this.player);
             this.lastUpdate = now;
             window.requestAnimationFrame(() => { this.gameLoop(); });
         }
