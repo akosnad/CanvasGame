@@ -1,3 +1,5 @@
+/// <reference path="multi.ts" />
+
 namespace CanvasGame {
     export class Sprite {
         xInitial = 0;
@@ -129,6 +131,7 @@ namespace CanvasGame {
         private player: Player;
         private lastUpdate: number;
         public isPaused = false;
+        public multi = new Multiplayer();
         private canvas: HTMLCanvasElement;
         private ctx: CanvasRenderingContext2D;
         constructor(player: Player) {
@@ -147,6 +150,7 @@ namespace CanvasGame {
             window.addEventListener('keypress', (e) => {
                 if(e.keyCode == PauseKeyCode) {self.isPaused = !self.isPaused;}
             });
+
 
             this.player = player;
             this.reset();
