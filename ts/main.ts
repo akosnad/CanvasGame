@@ -44,25 +44,25 @@ let tick = function (delta: number) {
   if (hero.y <= 0) {
     // Jump
     if (GameKeys.up in keysDown) { hero.yVelocity += hero.jumpStrenght; }
-    if (GameKeys.left in keysDown) {
-      hero.xVelocity -= hero.xVelocityIncrease;
+  }
+  if (GameKeys.left in keysDown) {
+    hero.xVelocity -= hero.xVelocityIncrease;
+  }
+  else if (GameKeys.right in keysDown) {
+    hero.xVelocity += hero.xVelocityIncrease;
+  }
+  // Not pressing anything
+  else {
+    // If going positive x, decrease velocity gradually
+    if (hero.xVelocity >= 0) {
+      hero.xVelocity -= hero.xVelocityDecrease;
     }
-    else if (GameKeys.right in keysDown) {
-      hero.xVelocity += hero.xVelocityIncrease;
-    }
-    // Not pressing anything
-    else {
-      // If going positive x, decrease velocity gradually
-      if (hero.xVelocity >= 0) {
-        hero.xVelocity -= hero.xVelocityDecrease;
-      }
-      // If going negative x, increase velocity gradually
-      if (hero.xVelocity < 0) {
-        hero.xVelocity += hero.xVelocityDecrease;
-      }
+    // If going negative x, increase velocity gradually
+    if (hero.xVelocity < 0) {
+      hero.xVelocity += hero.xVelocityDecrease;
     }
   }
-  
+
   hero.x += hero.xVelocity * delta // Apply x velocity
   hero.yVelocity -= hero.gravity; // Apply gravity
   hero.y += hero.yVelocity * delta // Apply y velocity
