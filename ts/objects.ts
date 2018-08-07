@@ -125,23 +125,26 @@ class Game {
     private lastUpdate: number;
     private canvas: any;
     private ctx: any;
-    constructor(player: Player) {
+    constructor(player: Player, canvasResizeCallback: EventListenerOrEventListenerObject) {
         this.canvas = document.createElement("canvas");
         var self = this;
         $(() => {
             document.body.appendChild(self.canvas);
         });
         this.ctx = this.canvas.getContext("2d");
-        window.addEventListener('resize', this.resizeCanvas, false);
-        this.resizeCanvas();
+        window.addEventListener('resize', canvasResizeCallback, false);
+        self = this;
+        this.resizeCanvas(self);
 
         this.player = player;
         this.reset();
         this.lastUpdate = Date.now();
     }
-    resizeCanvas() {
-        this.ctx.canvas.width = window.innerWidth;
-        this.ctx.canvas.height = window.innerHeight;
+    resizeCanvas(self: Game) {
+        self.ctx = self.canvas.getContext("2d");
+        self.ctx.canvas.width = window.innerWidth;
+        self.ctx.canvas.height = window.innerHeight;
+        return self;
     }
     reset() {
         this.gameSprites.forEach(sprite => {

@@ -1,4 +1,9 @@
-var game = new Game(new Player("/img/hero.png"));
+
+let canvasResizeCallback = () => {
+  game = game.resizeCanvas(game);
+}
+
+var game = new Game(new Player("/img/hero.png"), canvasResizeCallback);
 
 let gameLoop = () => {
   game = game.gameLoop(game);
