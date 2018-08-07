@@ -26,6 +26,7 @@ class Sprite {
         this.x = this.xInitial;
         this.y = this.yInitial;
     }
+    tick(delta: number) { }
     draw(canvasRenderingContext: CanvasRenderingContext2D) {
         if (this.imageReady) {
             canvasRenderingContext.drawImage(
@@ -53,7 +54,7 @@ class LivingSprite extends Sprite {
     }
 }
 
-class PlayerSprite extends LivingSprite {
+class Player extends LivingSprite {
     keysDown: boolean[] = new Array<boolean>();
     constructor(imageSource: string) {
         super(imageSource);
@@ -108,11 +109,6 @@ class PlayerSprite extends LivingSprite {
             this.y = 0;
             this.yVelocity = 0;
         }
-        // If this hits ceiling, stop
-        if (this.y > ctx.canvas.height) {
-            this.y = ctx.canvas.height;
-            this.yVelocity = 0;
-        }
     }
 }
 
@@ -121,4 +117,66 @@ enum GameKeys {
     right = 39,
     up = 38,
     down = 40
+}
+
+class Game {
+    private gameSprites: Array<Sprite> = new Array<Sprite>();
+    private player: Player;
+    private lastUpdate: number;
+    private canvas: any;
+    private ctx: any;
+    constructor(player: Player) {
+        this.canvas = document.createElement("canvas");
+        var self = this;
+        $(() => {
+            document.body.appendChild(self.canvas);
+        });
+        this.ctx = this.canvas.getContext("2d");
+        window.addEventListener('resize', this.resizeCanvas, false);
+        this.resizeCanvas();
+
+        this.player = player;
+        this.reset();
+        this.lastUpdate = Date.now();
+    }
+    resizeCanvas() {
+        this.ctx.canvas.width = window.innerWidth;
+        this.ctx.canvas.height = window.innerHeight;
+    }
+    reset() {
+        this.gameSprites.forEach(sprite => {
+            sprite.reset();
+        });
+    }
+    gameLoop(self: Game) {
+        var now = Date.now();
+        var delta = now - self.lastUpdate;
+        delta = delta / 1000;
+
+        self.gameSprites.forEach(sprite => {
+            sprite.tick(delta);
+        });
+        self.player.tick(delta);
+
+        // Clear canvas
+        self.ctx.fillStyle = "#000000";
+        self.ctx.fillRect(0, 0, self.ctx.canvas.width, self.ctx.canvas.height);
+
+        self.gameSprites.forEach(sprite => {
+            sprite.draw(self.ctx);
+        });
+        self.player.draw(self.ctx);
+        
+        self.lastUpdate = now;
+        return self;
+    }
+
+    addSprite(sprite: Sprite) {
+        this.gameSprites.push(sprite);
+    }
+    addSprites(sprites: Array<Sprite>) {
+        sprites.forEach(sprite => {
+            this.addSprite(sprite);
+        });
+    }
 }
