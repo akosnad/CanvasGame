@@ -42,6 +42,7 @@ namespace CanvasGame {
     }
 
     export class LivingSprite extends Sprite {
+        movingDirections: MovingDirections[] = new Array<MovingDirections>();
         xVelocity = 0;
         yVelocity = 0;
         xVelocityMax = 255;
@@ -49,26 +50,6 @@ namespace CanvasGame {
         xVelocityDecrease = 15;
         gravity = 15;
         jumpStrenght = 500;
-        reset() {
-            this.x = this.xInitial;
-            this.y = this.yInitial;
-            this.xVelocity = 0;
-            this.yVelocity = 0;
-        }
-    }
-
-    export class Player extends LivingSprite {
-        keysDown: boolean[] = new Array<boolean>();
-        constructor(imageSource: string) {
-            super(imageSource, 0, 0);
-            var self = this;
-            window.addEventListener('keydown', (e) => {
-                self.keysDown[e.keyCode] = true;
-            });
-            window.addEventListener('keyup', (e) => {
-                delete self.keysDown[e.keyCode];
-            });
-        }
         tick(delta: number) {
             // Limit velocity positive x
             if (this.xVelocity > this.xVelocityMax) { this.xVelocity = this.xVelocityMax; }
@@ -78,12 +59,12 @@ namespace CanvasGame {
             // Only accept input if on ground
             if (this.y <= 0) {
                 // Jump
-                if (GameKeys.up in this.keysDown) { this.yVelocity += this.jumpStrenght; }
+                if (MovingDirections.up in this.movingDirections) { this.yVelocity += this.jumpStrenght; }
             }
-            if (GameKeys.left in this.keysDown) {
+            if (MovingDirections.left in this.movingDirections) {
                 this.xVelocity -= this.xVelocityIncrease;
             }
-            else if (GameKeys.right in this.keysDown) {
+            else if (MovingDirections.right in this.movingDirections) {
                 this.xVelocity += this.xVelocityIncrease;
             }
             // Not pressing anything
@@ -113,9 +94,28 @@ namespace CanvasGame {
                 this.yVelocity = 0;
             }
         }
+        reset() {
+            this.x = this.xInitial;
+            this.y = this.yInitial;
+            this.xVelocity = 0;
+            this.yVelocity = 0;
+        }
     }
 
-    enum GameKeys {
+    export class Player extends LivingSprite {
+        constructor(imageSource: string, xInitial: number, yInitial: number) {
+            super(imageSource, xInitial, yInitial);
+            var self = this;
+            window.addEventListener('keydown', (e) => {
+                self.movingDirections[e.keyCode] = 1;
+            });
+            window.addEventListener('keyup', (e) => {
+                delete self.movingDirections[e.keyCode];
+            });
+        }
+    }
+
+    enum MovingDirections {
         left = 37,
         right = 39,
         up = 38,
