@@ -115,7 +115,7 @@ namespace CanvasGame {
         }
     }
 
-    enum MovingDirections {
+    export enum MovingDirections {
         left = 37,
         right = 39,
         up = 38,
