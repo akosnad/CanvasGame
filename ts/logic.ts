@@ -32,12 +32,12 @@ namespace CanvasGame {
             this.y = this.yInitial;
         }
         tick(delta: number) { }
-        draw(canvasRenderingContext: CanvasRenderingContext2D) {
+        draw(canvasRenderingContext: CanvasRenderingContext2D, offsetX: number, offsetY: number) {
             if (this.imageReady) {
                 canvasRenderingContext.drawImage(
                     this.image,
-                    this.x,
-                    canvasRenderingContext.canvas.height - this.y - this.hitboxHeight
+                    this.x - offsetX,
+                    canvasRenderingContext.canvas.height - this.y - this.hitboxHeight + offsetY
                 );
             }
         }
@@ -137,16 +137,20 @@ namespace CanvasGame {
     }
 
     var PauseKeyCode = 27; // Esc
+    var DebugKeyCode = 119; // F8
 
     export class Game {
         private gameSprites: Array<Sprite> = new Array<Sprite>();
         private player: Player;
+        private scrollX = 0;
+        private scrollY = 0;
         private lastUpdate: number;
         public isPaused = false;
         public multi = new Multiplayer();
         private canvas: HTMLCanvasElement;
         private ctx: CanvasRenderingContext2D;
         private pauseIndicator: HTMLElement;
+        private debugInfoEnabled = false;
         constructor(player: Player) {
             this.canvas = <HTMLCanvasElement>document.getElementById("game-canvas");
             this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
@@ -154,7 +158,7 @@ namespace CanvasGame {
             window.addEventListener('resize', () => self.resizeCanvas(), false);
             this.resizeCanvas();
             self = this;
-            window.addEventListener('keypress', (e) => {
+            window.addEventListener('keypress', e => {
                 if (e.keyCode == PauseKeyCode) {
                     self.isPaused = !self.isPaused;
                     if (self.isPaused) {
@@ -165,6 +169,12 @@ namespace CanvasGame {
                         $(self.pauseIndicator).removeClass("slide-in-blurred-left");
                         $(self.pauseIndicator).addClass("slide-out-blurred-right");
                     }
+                }
+            });
+            self = this;
+            window.addEventListener('keypress', e => {
+                if (e.keyCode == DebugKeyCode) {
+                    self.debugInfoEnabled = !self.debugInfoEnabled;
                 }
             });
 
@@ -199,20 +209,54 @@ namespace CanvasGame {
                     sprite.tick(delta);
                 });
                 this.player.tick(delta);
+                // Scroll screen if needed
+                if (this.player.x - this.scrollX > this.ctx.canvas.width * 0.8) {
+                    this.scrollX += this.player.x - this.scrollX - (this.ctx.canvas.width * 0.8);
+                } else if (this.player.x - this.scrollX < this.ctx.canvas.width * 0.2) {
+                    this.scrollX -= (this.scrollX + (this.ctx.canvas.width * 0.2)) - this.player.x;
+                }
+                if (this.player.y - this.scrollY > this.ctx.canvas.height * 0.9) {
+                    this.scrollY += this.player.y - this.scrollY - (this.ctx.canvas.height * 0.9);
+                } else if (this.player.y - this.scrollY < this.ctx.canvas.height * 0.1) {
+                    this.scrollY -= (this.scrollY + (this.ctx.canvas.height * 0.1)) - this.player.y;
+                }
+                if (this.scrollX < 0) { this.scrollX = 0; }
+                if (this.scrollY < 0) { this.scrollY = 0; }
             }
             // Clear canvas
             this.ctx.fillStyle = "#000000";
             this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
             // Draw sprites
             this.gameSprites.forEach(sprite => {
-                sprite.draw(this.ctx);
+                sprite.draw(this.ctx, this.scrollX, this.scrollY);
             });
             // Draw other players
             otherPlayers.forEach(player => {
-                player.draw(this.ctx);
+                player.draw(this.ctx, this.scrollX, this.scrollY);
             });
             // Draw our player
-            this.player.draw(this.ctx);
+            this.player.draw(this.ctx, this.scrollX, this.scrollY);
+            // Display debug info if enabled
+            if (this.debugInfoEnabled) {
+                this.ctx.fillStyle = "#FFFFFF";
+                this.ctx.font = "12px Roboto";
+                this.ctx.fillText("Canvas Game", this.ctx.canvas.width - 88, this.canvas.height - 24);
+                this.ctx.fillText("Made by Ákos Nádudvari", this.ctx.canvas.width - 150, this.ctx.canvas.height - 12);
+                this.ctx.fillText("x", 0, 24);
+                this.ctx.fillText("y", 0, 36);
+                this.ctx.fillText("absolute pos", 20, 12);
+                this.ctx.fillText(Math.round(this.player.x).toString(), 20, 24);
+                this.ctx.fillText(Math.round(this.player.y).toString(), 20, 36);
+                this.ctx.fillText("scroll", 120, 12);
+                this.ctx.fillText(Math.round(this.scrollX).toString(), 120, 24);
+                this.ctx.fillText(Math.round(this.scrollY).toString(), 120, 36);
+                this.ctx.fillText("relative pos", 220, 12);
+                this.ctx.fillText(Math.round(this.player.x - this.scrollX).toString(), 220, 24);
+                this.ctx.fillText(Math.round(this.player.y - this.scrollY).toString(), 220, 36);
+                this.ctx.fillText("screen", 320, 12);
+                this.ctx.fillText(Math.round(this.ctx.canvas.width).toString(), 320, 24);
+                this.ctx.fillText(Math.round(this.ctx.canvas.height).toString(), 320, 36);
+            }
             if (this.isPaused) {
                 this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
                 this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
