@@ -135,7 +135,7 @@ namespace CanvasGame {
         up = 38,
         down = 40,
     }
-    
+
     var PauseKeyCode = 27; // Esc
 
     export class Game {
@@ -146,22 +146,32 @@ namespace CanvasGame {
         public multi = new Multiplayer();
         private canvas: HTMLCanvasElement;
         private ctx: CanvasRenderingContext2D;
+        private pauseIndicator: HTMLElement;
         constructor(player: Player) {
-            this.canvas = <HTMLCanvasElement> document.getElementById("game-canvas");
-            this.ctx = <CanvasRenderingContext2D> this.canvas.getContext("2d");
+            this.canvas = <HTMLCanvasElement>document.getElementById("game-canvas");
+            this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
             var self = this;
-            window.addEventListener('resize', () => {
-                self.resizeCanvas()
-            }, false);
+            window.addEventListener('resize', () => self.resizeCanvas(), false);
             this.resizeCanvas();
             self = this;
             window.addEventListener('keypress', (e) => {
-                if(e.keyCode == PauseKeyCode) {self.isPaused = !self.isPaused;}
+                if (e.keyCode == PauseKeyCode) {
+                    self.isPaused = !self.isPaused;
+                    if (self.isPaused) {
+                        $(self.pauseIndicator).show();
+                        $(self.pauseIndicator).addClass("slide-in-blurred-left");
+                        $(self.pauseIndicator).removeClass("slide-out-blurred-right");
+                    } else {
+                        $(self.pauseIndicator).removeClass("slide-in-blurred-left");
+                        $(self.pauseIndicator).addClass("slide-out-blurred-right");
+                    }
+                }
             });
 
+            this.pauseIndicator = <HTMLElement>document.getElementById("pause-indicator");
+            $(this.pauseIndicator).hide();
 
             this.player = player;
-            this.reset();
             this.lastUpdate = Date.now();
         }
         resizeCanvas() {
@@ -206,9 +216,9 @@ namespace CanvasGame {
             if (this.isPaused) {
                 this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
                 this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-                this.ctx.fillStyle = "#FFFFFF"
-                this.ctx.font = "30px Arial";
-                this.ctx.fillText("Paused", this.ctx.canvas.width / 2, this.ctx.canvas.height / 2);
+                // this.ctx.fillStyle = "#FFFFFF"
+                // this.ctx.font = "30px Roboto";
+                // this.ctx.fillText("Paused", this.ctx.canvas.width / 2, this.ctx.canvas.height / 2);
             }
             this.multi.sendPlayerData(this.player);
             this.lastUpdate = now;
