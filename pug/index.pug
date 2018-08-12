@@ -1,4 +1,12 @@
 extends layout/head
 
 append script
-    script(src='/js/game.js')
+  script(src='/js/game.js')
+
+append style
+  link(rel='stylesheet', href='/index.css')
+
+block body
+  div.view
+    canvas#game-canvas
+    div.mask.pattern-7

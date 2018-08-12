@@ -147,13 +147,9 @@ namespace CanvasGame {
         private canvas: HTMLCanvasElement;
         private ctx: CanvasRenderingContext2D;
         constructor(player: Player) {
-            this.canvas = document.createElement("canvas");
+            this.canvas = <HTMLCanvasElement> document.getElementById("game-canvas");
+            this.ctx = <CanvasRenderingContext2D> this.canvas.getContext("2d");
             var self = this;
-            $(() => {
-                document.body.appendChild(self.canvas);
-            });
-            this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
-            self = this;
             window.addEventListener('resize', () => {
                 self.resizeCanvas()
             }, false);
