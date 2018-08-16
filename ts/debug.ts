@@ -4,7 +4,7 @@ namespace CanvasGame {
         static displayDebugInfo(game: Game, delta: number) {
             if (this.debugInfoEnabled) {
                 Debug.drawDebugText(game.ctx, game.player, game.scrollX, game.scrollY, delta * 1000);
-                for (let sprite of game.gameSprites) {
+                for (let sprite of game.sprites) {
                     Debug.drawSpriteHitbox(game.ctx, sprite, "rgba(0, 255, 0, 0.25)", game.scrollX, game.scrollY);
                 }
                 for (let player of otherPlayers) {
@@ -22,7 +22,7 @@ namespace CanvasGame {
 
             ctx.fillText("x", 0, 24);
             ctx.fillText("y", 0, 36);
-            
+
             ctx.fillText("absolute pos", 20, 12);
             ctx.fillText(player.x.toString(), 20, 24);
             ctx.fillText(player.y.toString(), 20, 36);
@@ -58,6 +58,12 @@ namespace CanvasGame {
             ctx.fillStyle = "#FFFFFF";
             ctx.font = "12px Roboto";
             ctx.fillText(": Other players' hitbox", 16, 110);
+
+            ctx.fillText("level", 220, 62);
+            ctx.fillText(game.level.sourceFile, 220, 74);
+
+            ctx.fillText("level id", 420, 62);
+            ctx.fillText(game.level.id.toString(), 420, 74);
         }
         private static drawSpriteHitbox(ctx: CanvasRenderingContext2D, sprite: Sprite, color: string, offsetX: number, offsetY: number) {
             ctx.fillStyle = color;

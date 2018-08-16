@@ -1,0 +1,40 @@
+{
+    "sprites": [
+        {
+            "xInitial": 500,
+            "yInitial": 48,
+            "hitboxWidth": 0,
+            "hitboxHeight": 0,
+            "solid": false,
+            "imageSource": "/img/monster.png"
+        },
+        {
+            "xInitial": 700,
+            "yInitial": 0,
+            "hitboxWidth": 0,
+            "hitboxHeight": 0,
+            "solid": true,
+            "imageSource": "/img/monster.png"
+        },
+        {
+            "xInitial": 1000,
+            "yInitial": 32,
+            "hitboxWidth": 100,
+            "hitboxHeight": 32,
+            "solid": true,
+            "imageSource": "/img/monster.png"
+        },
+        {
+            "xInitial": 1500,
+            "yInitial": 0,
+            "hitboxWidth": 32,
+            "hitboxHeight": 500,
+            "solid": true,
+            "imageSource": "/img/monster.png"
+        }
+    ],
+    "id": 123456,
+    "playerXInitial": 0,
+    "playerYInitial": 0,
+    "playerImageSource": "/img/hero.png"
+}

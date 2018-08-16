@@ -10,9 +10,11 @@ namespace CanvasGame {
         hitboxHeight = 0;
         solid = true;
         image = document.createElement("img");
+        imageSource: string;
         imageReady = false;
 
         constructor(imageSource: string, xInitial: number, yInitial: number) {
+            this.imageSource = imageSource;
             this.xInitial = xInitial;
             this.yInitial = yInitial;
             this.x = this.xInitial;
@@ -190,12 +192,14 @@ namespace CanvasGame {
     }
 
     export class OtherPlayer extends Sprite {
-        id: number;
+        playerId: number;
+        levelId: number;
         lastUpdateTimestamp: number;
         solid = false;
         constructor(imageSource: string, playerData: MultiPlayerData) {
             super(imageSource, 0, 0);
-            this.id = playerData.id;
+            this.playerId = playerData.playerId;
+            this.levelId = playerData.levelId;
             this.lastUpdateTimestamp = playerData.lastUpdateTimestamp;
         }
     }
@@ -213,7 +217,8 @@ namespace CanvasGame {
     let DebugKeyCode = 119; // F8
 
     export class Game {
-        gameSprites: Array<Sprite> = new Array<Sprite>();
+        level: Level = new Level();
+        sprites = new Array<Sprite>();
         player: Player;
         scrollX = 0;
         scrollY = 0;
@@ -225,7 +230,7 @@ namespace CanvasGame {
         private canvas: HTMLCanvasElement;
         ctx: CanvasRenderingContext2D;
         private pauseIndicator: HTMLElement;
-        constructor(player: Player) {
+        constructor(level: Level) {
             this.canvas = <HTMLCanvasElement>document.getElementById("game-canvas");
             this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
             var self = this;
@@ -261,8 +266,21 @@ namespace CanvasGame {
             this.pauseIndicator = <HTMLElement>document.getElementById("pause-indicator");
             $(this.pauseIndicator).hide();
 
-            this.player = player;
+            this.player = new Player(level.playerImageSource, level.playerXInitial, level.playerYInitial);
+            this.loadLevel(level);
             this.lastUpdate = Date.now();
+        }
+        loadLevel(level: Level) {
+            this.level = level;
+            for(let levelSprite of level.sprites) {
+                let sprite = new Sprite(levelSprite.imageSource, levelSprite.xInitial, levelSprite.yInitial);
+                sprite.solid = levelSprite.solid;
+                sprite.hitboxHeight = levelSprite.hitboxHeight;
+                sprite.hitboxWidth = levelSprite.hitboxWidth;
+                this.sprites.push(sprite);
+            }
+            this.player = new Player(level.playerImageSource, level.playerXInitial, level.playerYInitial);
+            this.reset();
         }
         resizeCanvas() {
             this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
@@ -270,12 +288,13 @@ namespace CanvasGame {
             this.ctx.canvas.height = window.innerHeight;
         }
         reset() {
-            for (let sprite of this.gameSprites) {
+            for (let sprite of this.sprites) {
                 sprite.reset();
             }
             this.player.reset();
         }
         start() {
+            $(this.pauseIndicator).text("Paused");
             this.multi.start();
             this.gameLoop();
         }
@@ -294,7 +313,7 @@ namespace CanvasGame {
                 this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
                 this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
             }
-            this.multi.sendPlayerData(this.player);
+            this.multi.sendPlayerData(this.player, this.level);
             this.lastUpdate = now;
             window.requestAnimationFrame(() => { this.gameLoop(); });
             // setTimeout(() => {
@@ -302,19 +321,18 @@ namespace CanvasGame {
             // }, 50); // render every 50ms for testing
         }
 
-        private displayDebugInfo(delta: number) {
-        }
-
         private drawSprites() {
             this.ctx.fillStyle = "#000000";
             this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
             // Draw sprites
-            for (let sprite of this.gameSprites) {
+            for (let sprite of this.sprites) {
                 sprite.draw(this.ctx, this.scrollX, this.scrollY);
             }
             // Draw other players
             for (let player of otherPlayers) {
-                player.draw(this.ctx, this.scrollX, this.scrollY);
+                if (player.levelId == this.level.id) {
+                    player.draw(this.ctx, this.scrollX, this.scrollY);
+                }
             }
             // Draw our player
             this.player.draw(this.ctx, this.scrollX, this.scrollY);
@@ -343,14 +361,14 @@ namespace CanvasGame {
 
         private tickSprites(delta: number) {
             var self = this;
-            for (let sprite of this.gameSprites) {
-                sprite.tick(delta, self.gameSprites);
+            for (let sprite of this.sprites) {
+                sprite.tick(delta, self.sprites);
             }
-            this.player.tick(delta, this.gameSprites);
+            this.player.tick(delta, this.sprites);
         }
 
         addSprite(sprite: Sprite) {
-            this.gameSprites.push(sprite);
+            this.level.sprites.push(sprite);
         }
         addSprites(sprites: Array<Sprite>) {
             for (let sprite of sprites) {
