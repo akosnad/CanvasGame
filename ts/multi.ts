@@ -2,6 +2,7 @@
 /// <reference path="logic.ts" />
 
 namespace CanvasGame {
+    // Own data that gets sent to other players
     export class MultiPlayerData {
         id: number;
         x: number;
