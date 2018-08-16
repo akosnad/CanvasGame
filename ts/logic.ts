@@ -213,17 +213,18 @@ namespace CanvasGame {
     let DebugKeyCode = 119; // F8
 
     export class Game {
-        private gameSprites: Array<Sprite> = new Array<Sprite>();
-        private player: Player;
-        private scrollX = 0;
-        private scrollY = 0;
+        gameSprites: Array<Sprite> = new Array<Sprite>();
+        player: Player;
+        scrollX = 0;
+        scrollY = 0;
+        mouseX = 0;
+        mouseY = 0;
         private lastUpdate: number;
-        public isPaused = false;
-        public multi = new Multiplayer();
+        isPaused = false;
+        multi = new Multiplayer();
         private canvas: HTMLCanvasElement;
-        private ctx: CanvasRenderingContext2D;
+        ctx: CanvasRenderingContext2D;
         private pauseIndicator: HTMLElement;
-        private debugInfoEnabled = false;
         constructor(player: Player) {
             this.canvas = <HTMLCanvasElement>document.getElementById("game-canvas");
             this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
@@ -247,9 +248,14 @@ namespace CanvasGame {
             self = this;
             window.addEventListener('keypress', e => {
                 if (e.keyCode == DebugKeyCode) {
-                    self.debugInfoEnabled = !self.debugInfoEnabled;
+                    Debug.debugInfoEnabled = !Debug.debugInfoEnabled;
                     e.preventDefault();
                 }
+            });
+            self = this;
+            window.addEventListener('mousemove', e => {
+                self.mouseX = e.x;
+                self.mouseY = e.y;
             });
 
             this.pauseIndicator = <HTMLElement>document.getElementById("pause-indicator");
@@ -283,7 +289,7 @@ namespace CanvasGame {
             }
             this.drawSprites();
 
-            this.displayDebugInfo(delta);
+            Debug.displayDebugInfo(this, delta);
             if (this.isPaused) {
                 this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
                 this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -297,16 +303,6 @@ namespace CanvasGame {
         }
 
         private displayDebugInfo(delta: number) {
-            if (this.debugInfoEnabled) {
-                Debug.drawDebugText(this.ctx, this.player, this.scrollX, this.scrollY, delta * 1000);
-                for (let sprite of this.gameSprites) {
-                    Debug.drawSpriteHitbox(this.ctx, sprite, "rgba(0, 255, 0, 0.25)", this.scrollX, this.scrollY);
-                }
-                for (let player of otherPlayers) {
-                    Debug.drawSpriteHitbox(this.ctx, player, "rgba(0, 0, 255, 0.25)", this.scrollX, this.scrollY);
-                }
-                Debug.drawSpriteHitbox(this.ctx, this.player, "rgba(255, 0, 0, 0.25)", this.scrollX, this.scrollY);
-            }
         }
 
         private drawSprites() {

@@ -1,12 +1,28 @@
 namespace CanvasGame {
     export class Debug {
-        static drawDebugText(ctx: CanvasRenderingContext2D, player: Player, scrollX: number, scrollY: number, timeDelta: number) {
+        public static debugInfoEnabled = false;
+        static displayDebugInfo(game: Game, delta: number) {
+            if (this.debugInfoEnabled) {
+                Debug.drawDebugText(game.ctx, game.player, game.scrollX, game.scrollY, delta * 1000);
+                for (let sprite of game.gameSprites) {
+                    Debug.drawSpriteHitbox(game.ctx, sprite, "rgba(0, 255, 0, 0.25)", game.scrollX, game.scrollY);
+                }
+                for (let player of otherPlayers) {
+                    Debug.drawSpriteHitbox(game.ctx, player, "rgba(0, 0, 255, 0.25)", game.scrollX, game.scrollY);
+                }
+                Debug.drawSpriteHitbox(game.ctx, game.player, "rgba(255, 0, 0, 0.25)", game.scrollX, game.scrollY);
+                Debug.drawPointer(game.ctx, game.mouseX, game.mouseY);
+            }
+        }
+        private static drawDebugText(ctx: CanvasRenderingContext2D, player: Player, scrollX: number, scrollY: number, timeDelta: number) {
             ctx.fillStyle = "#FFFFFF";
             ctx.font = "12px Roboto";
             ctx.fillText("Canvas Game", ctx.canvas.width - 88, ctx.canvas.height - 24);
             ctx.fillText("Made by Ákos Nádudvari", ctx.canvas.width - 150, ctx.canvas.height - 12);
+
             ctx.fillText("x", 0, 24);
             ctx.fillText("y", 0, 36);
+            
             ctx.fillText("absolute pos", 20, 12);
             ctx.fillText(player.x.toString(), 20, 24);
             ctx.fillText(player.y.toString(), 20, 36);
@@ -43,13 +59,17 @@ namespace CanvasGame {
             ctx.font = "12px Roboto";
             ctx.fillText(": Other players' hitbox", 16, 110);
         }
-        static drawSpriteHitbox(ctx: CanvasRenderingContext2D, sprite: Sprite, color: string, offsetX: number, offsetY: number) {
+        private static drawSpriteHitbox(ctx: CanvasRenderingContext2D, sprite: Sprite, color: string, offsetX: number, offsetY: number) {
             ctx.fillStyle = color;
             ctx.fillRect(
                 sprite.x - offsetX,
                 ctx.canvas.height - sprite.y - sprite.hitboxHeight + offsetY,
                 sprite.hitboxWidth,
                 sprite.hitboxHeight);
+        }
+        private static drawPointer(ctx: CanvasRenderingContext2D, x:number, y:number) {
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(x - 2, y - 2, 4, 4);
         }
     }
 }
