@@ -205,7 +205,7 @@ namespace CanvasGame {
         }
         draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number) {
             if (this.imageReady) {
-                if(this.isPaused) {
+                if (this.isPaused) {
                     ctx.globalAlpha = 0.4;
                 }
                 ctx.drawImage(
@@ -230,11 +230,38 @@ namespace CanvasGame {
     let PauseKeyCode = 27; // Esc
     let DebugKeyCode = 119; // F8
 
+    export class Background {
+        image = document.createElement("img");
+        imageReady = false;
+        constructor(imageSource: string) {
+            if (imageSource != "") {
+                this.image.src = imageSource;
+                var self = this;
+                this.image.onload = (e) => {
+                    self.imageReady = true;
+                };
+            }
+        }
+        draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number) {
+            if (this.imageReady) {
+                offsetX = offsetX % this.image.width;
+                let times = Math.ceil(ctx.canvas.width / this.image.width);
+                for (let i = 0; i < times + 1; i++) {
+                    ctx.drawImage(this.image,
+                        (i * this.image.width) - offsetX,
+                        ctx.canvas.height - this.image.height + offsetY
+                    );
+                }
+            }
+        }
+    }
+
     export class Game {
         level: Level = new Level();
         levelList: LevelList;
         sprites = new Array<Sprite>();
         player: Player;
+        background: Background;
         scrollX = 0;
         scrollY = 0;
         mouseX = 0;
@@ -296,12 +323,14 @@ namespace CanvasGame {
                 $(this.levelSelector).append(levelButton);
             }
 
+            this.background = new Background(level.backgroundImageSource);
             this.player = new Player(level.playerImageSource, level.playerXInitial, level.playerYInitial);
             this.loadLevel(level);
             this.lastUpdate = Date.now();
         }
         loadLevel(level: Level) {
             this.level = level;
+            this.background = new Background(level.backgroundImageSource);
             this.sprites = new Array<Sprite>();
             for (let levelSprite of level.sprites) {
                 let sprite = new Sprite(levelSprite.imageSource, levelSprite.xInitial, levelSprite.yInitial);
@@ -341,6 +370,11 @@ namespace CanvasGame {
                 this.tickSprites(delta);
                 this.scrollScreen();
             }
+            this.ctx.fillStyle = "#000000";
+            this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
+            this.background.draw(this.ctx, this.scrollX, this.scrollY);
+
             this.drawSprites();
 
             Debug.displayDebugInfo(this, delta);
@@ -355,11 +389,8 @@ namespace CanvasGame {
             //     this.gameLoop();
             // }, 50); // render every 50ms for testing
         }
-
         private drawSprites() {
-            this.ctx.fillStyle = "#000000";
-            this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-            // Draw sprites
+            // Draw game sprites
             for (let sprite of this.sprites) {
                 sprite.draw(this.ctx, this.scrollX, this.scrollY);
             }

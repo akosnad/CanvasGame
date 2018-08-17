@@ -37,5 +37,6 @@
     "playerXInitial": 0,
     "playerYInitial": 0,
     "playerImageSource": "/img/hero.png",
-    "name": "Collision Test"
+    "backgroundImageSource": "",
+    "name": "Testing"
 }

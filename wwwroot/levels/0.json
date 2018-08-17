@@ -4,5 +4,6 @@
     "playerXInitial": 0,
     "playerYInitial": 0,
     "playerImageSource": "/img/hero.png",
+    "backgroundImageSource": "/img/bg.jpg",
     "name": "Main"
 }
