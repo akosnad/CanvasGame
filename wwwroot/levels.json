@@ -1,0 +1,12 @@
+{
+    "levels": [
+        {
+            "name": "Main",
+            "path": "/levels/0.json"
+        },
+        {
+            "name": "Collision Test",
+            "path": "/levels/collisionTest.json"
+        }
+    ]
+}

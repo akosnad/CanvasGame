@@ -1,17 +1,35 @@
 namespace CanvasGame {
     export class LevelLoader {
         static load(sourceFileURL: string) {
+            Debug.log("loading level: ", sourceFileURL);
             let levelData: Level = new Level();
             $.ajax({
                 async: false,
                 type: 'GET',
                 url: sourceFileURL,
-                success: function(data) {
-                    levelData = <Level> data;
+                success: (data) => {
+                    levelData = <Level>data;
+                },
+                error: (e) => {
+
                 }
             });
             levelData.sourceFile = sourceFileURL;
+            Debug.log("Level Loaded: ", levelData);
             return levelData;
+        }
+        static getList() {
+            let levels = new LevelList();
+            $.ajax({
+                async: false,
+                type: 'GET',
+                url: "/levels.json",
+                success: (data) => {
+                    levels = <LevelList>data;
+                }
+            });
+            Debug.log("Got level list: ", levels);
+            return levels;
         }
     }
 
@@ -22,6 +40,7 @@ namespace CanvasGame {
         playerYInitial = 0;
         playerImageSource = "";
         sourceFile = "";
+        name = "";
     }
 
     class LevelSprite {
@@ -39,5 +58,13 @@ namespace CanvasGame {
             this.hitboxWidth = sprite.hitboxWidth;
             this.hitboxHeight = sprite.hitboxHeight;
         }
+    }
+
+    interface LevelDescription {
+        name: string;
+        path: string;
+    }
+    export class LevelList {
+        levels = new Array<LevelDescription>();
     }
 }

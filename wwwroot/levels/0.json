@@ -1,0 +1,8 @@
+{
+    "sprites": [],
+    "id": 0,
+    "playerXInitial": 0,
+    "playerYInitial": 0,
+    "playerImageSource": "/img/hero.png",
+    "name": "Main"
+}

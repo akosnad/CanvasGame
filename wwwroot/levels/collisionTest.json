@@ -36,5 +36,6 @@
     "id": 123456,
     "playerXInitial": 0,
     "playerYInitial": 0,
-    "playerImageSource": "/img/hero.png"
+    "playerImageSource": "/img/hero.png",
+    "name": "Collision Test"
 }

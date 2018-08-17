@@ -218,6 +218,7 @@ namespace CanvasGame {
 
     export class Game {
         level: Level = new Level();
+        levelList: LevelList;
         sprites = new Array<Sprite>();
         player: Player;
         scrollX = 0;
@@ -230,6 +231,7 @@ namespace CanvasGame {
         private canvas: HTMLCanvasElement;
         ctx: CanvasRenderingContext2D;
         private pauseIndicator: HTMLElement;
+        private levelSelector: HTMLElement;
         constructor(level: Level) {
             this.canvas = <HTMLCanvasElement>document.getElementById("game-canvas");
             this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
@@ -266,13 +268,28 @@ namespace CanvasGame {
             this.pauseIndicator = <HTMLElement>document.getElementById("pause-indicator");
             $(this.pauseIndicator).hide();
 
+            this.levelSelector = <HTMLElement>document.getElementById("level-selector");
+            this.levelList = LevelLoader.getList();
+            for (let level of this.levelList.levels) {
+                let levelButton = document.createElement("li");
+                levelButton.setAttribute("class", "list-group-item wave-effect");
+                levelButton.setAttribute("level-path", level.path);
+                levelButton.innerText = level.name;
+                var self = this;
+                levelButton.addEventListener("click", (e) => {
+                    self.changeLevel(<string>(<Element>e.target).getAttribute("level-path"));
+                }, false);
+                $(this.levelSelector).append(levelButton);
+            }
+
             this.player = new Player(level.playerImageSource, level.playerXInitial, level.playerYInitial);
             this.loadLevel(level);
             this.lastUpdate = Date.now();
         }
         loadLevel(level: Level) {
             this.level = level;
-            for(let levelSprite of level.sprites) {
+            this.sprites = new Array<Sprite>();
+            for (let levelSprite of level.sprites) {
                 let sprite = new Sprite(levelSprite.imageSource, levelSprite.xInitial, levelSprite.yInitial);
                 sprite.solid = levelSprite.solid;
                 sprite.hitboxHeight = levelSprite.hitboxHeight;
@@ -281,6 +298,10 @@ namespace CanvasGame {
             }
             this.player = new Player(level.playerImageSource, level.playerXInitial, level.playerYInitial);
             this.reset();
+        }
+        changeLevel(levelPathURL: string) {
+            Debug.log("Chaging level: ", levelPathURL);
+            this.loadLevel(LevelLoader.load(levelPathURL));
         }
         resizeCanvas() {
             this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
@@ -294,7 +315,7 @@ namespace CanvasGame {
             this.player.reset();
         }
         start() {
-            $(this.pauseIndicator).text("Paused");
+            // $(this.pauseIndicator).text("Paused");
             this.multi.start();
             this.gameLoop();
         }

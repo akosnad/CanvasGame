@@ -8,7 +8,9 @@ namespace CanvasGame {
                     Debug.drawSpriteHitbox(game.ctx, sprite, "rgba(0, 255, 0, 0.25)", game.scrollX, game.scrollY);
                 }
                 for (let player of otherPlayers) {
-                    Debug.drawSpriteHitbox(game.ctx, player, "rgba(0, 0, 255, 0.25)", game.scrollX, game.scrollY);
+                    if (player.levelId == game.level.id) {
+                        Debug.drawSpriteHitbox(game.ctx, player, "rgba(0, 0, 255, 0.25)", game.scrollX, game.scrollY);
+                    }
                 }
                 Debug.drawSpriteHitbox(game.ctx, game.player, "rgba(255, 0, 0, 0.25)", game.scrollX, game.scrollY);
                 Debug.drawPointer(game.ctx, game.mouseX, game.mouseY);
@@ -60,10 +62,13 @@ namespace CanvasGame {
             ctx.fillText(": Other players' hitbox", 16, 110);
 
             ctx.fillText("level", 220, 62);
-            ctx.fillText(game.level.sourceFile, 220, 74);
+            ctx.fillText(game.level.name, 220, 74);
 
-            ctx.fillText("level id", 420, 62);
-            ctx.fillText(game.level.id.toString(), 420, 74);
+            ctx.fillText("level source", 420, 62);
+            ctx.fillText(game.level.sourceFile, 420, 74);
+
+            ctx.fillText("level id", 620, 62);
+            ctx.fillText(game.level.id.toString(), 620, 74);
         }
         private static drawSpriteHitbox(ctx: CanvasRenderingContext2D, sprite: Sprite, color: string, offsetX: number, offsetY: number) {
             ctx.fillStyle = color;
@@ -73,9 +78,14 @@ namespace CanvasGame {
                 sprite.hitboxWidth,
                 sprite.hitboxHeight);
         }
-        private static drawPointer(ctx: CanvasRenderingContext2D, x:number, y:number) {
+        private static drawPointer(ctx: CanvasRenderingContext2D, x: number, y: number) {
             ctx.fillStyle = "#FFFFFF";
             ctx.fillRect(x - 2, y - 2, 4, 4);
+        }
+        public static log(message?: any, ...optionalParams: any[]) {
+            if (Debug.debugInfoEnabled) {
+                console.debug(message, optionalParams);
+            }
         }
     }
 }
