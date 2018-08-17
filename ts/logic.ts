@@ -35,12 +35,12 @@ namespace CanvasGame {
             this.y = this.yInitial;
         }
         tick(timeDelta: number, otherSprites: Array<Sprite>) { }
-        draw(canvasRenderingContext: CanvasRenderingContext2D, offsetX: number, offsetY: number) {
+        draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number) {
             if (this.imageReady) {
-                canvasRenderingContext.drawImage(
+                ctx.drawImage(
                     this.image,
                     this.x - offsetX,
-                    canvasRenderingContext.canvas.height - this.y - this.hitboxHeight + offsetY
+                    ctx.canvas.height - this.y - this.hitboxHeight + offsetY
                 );
             }
         }
@@ -196,11 +196,25 @@ namespace CanvasGame {
         levelId: number;
         lastUpdateTimestamp: number;
         solid = false;
+        isPaused = false;
         constructor(imageSource: string, playerData: MultiPlayerData) {
             super(imageSource, 0, 0);
             this.playerId = playerData.playerId;
             this.levelId = playerData.levelId;
             this.lastUpdateTimestamp = playerData.lastUpdateTimestamp;
+        }
+        draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number) {
+            if (this.imageReady) {
+                if(this.isPaused) {
+                    ctx.globalAlpha = 0.4;
+                }
+                ctx.drawImage(
+                    this.image,
+                    this.x - offsetX,
+                    ctx.canvas.height - this.y - this.hitboxHeight + offsetY
+                );
+                ctx.globalAlpha = 1;
+            }
         }
     }
 
@@ -334,7 +348,7 @@ namespace CanvasGame {
                 this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
                 this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
             }
-            this.multi.sendPlayerData(this.player, this.level);
+            this.multi.sendPlayerData(this.player, this.level, this.isPaused);
             this.lastUpdate = now;
             window.requestAnimationFrame(() => { this.gameLoop(); });
             // setTimeout(() => {

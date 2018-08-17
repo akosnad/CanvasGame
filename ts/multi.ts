@@ -9,12 +9,14 @@ namespace CanvasGame {
         x: number;
         y: number;
         lastUpdateTimestamp: number;
-        constructor(x: number, y: number, playerId: number, levelId: number, lastUpdateTimestamp: number) {
+        isPaused: boolean;
+        constructor(x: number, y: number, playerId: number, levelId: number, lastUpdateTimestamp: number, isPaused: boolean) {
             this.playerId = playerId;
             this.levelId = levelId;
             this.x = x;
             this.y = y;
             this.lastUpdateTimestamp = lastUpdateTimestamp;
+            this.isPaused = isPaused;
         }
     }
     export class Multiplayer {
@@ -46,6 +48,7 @@ namespace CanvasGame {
                     player.x = playerData.x;
                     player.y = playerData.y;
                     player.levelId = playerData.levelId;
+                    player.isPaused = playerData.isPaused;
                     playerExists = true;
                 }
             });
@@ -53,8 +56,8 @@ namespace CanvasGame {
                 otherPlayers.push(new OtherPlayer("/img/monster.png", playerData));
             }
         }
-        sendPlayerData(player: Player, level: Level) {
-            var playerData = JSON.stringify(new MultiPlayerData(player.x, player.y, this.playerId, level.id, Date.now()));
+        sendPlayerData(player: Player, level: Level, isPaused: boolean) {
+            var playerData = JSON.stringify(new MultiPlayerData(player.x, player.y, this.playerId, level.id, Date.now(), isPaused));
             this.connection.invoke("SendPlayerData", playerData);
         }
         cleanupOldPlayerData() {
