@@ -299,10 +299,10 @@ namespace CanvasGame {
             this.pattern = c.createPattern(this.image, "repeat");
         }
         draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number) {
-            if (this.imageReady) {
+            if (this.imageReady && typeof this.pattern != "undefined") {
                 (<CanvasPattern>this.pattern).setTransform(this.matrix.translate(
-                    ctx.canvas.width - offsetX,
-                    offsetY
+                    this.x - offsetX,
+                    ctx.canvas.height - this.y - this.h + offsetY
                 ));
                 ctx.fillStyle = <CanvasPattern>this.pattern;
                 ctx.fillRect(
