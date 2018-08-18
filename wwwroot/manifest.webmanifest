@@ -1,0 +1,18 @@
+{
+    "background_color": "#ffffff",
+    "display": "fullscreen",
+    "icons": [
+      {
+        "src": "/img/hero_big.png",
+        "type": "image/png",
+        "sizes": "any"
+      }
+    ],
+    "name": "Canvas Game",
+    "scope": "/",
+    "short_name": "CanvasGame",
+    "start_url": "/",
+    "theme_color": "#000000",
+    "orientation": "any"
+  }
+  

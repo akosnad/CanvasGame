@@ -389,3 +389,4 @@ $RECYCLE.BIN/
 wwwroot/lib
 wwwroot/js
 wwwroot/index.html
+wwwroot/service-worker.js

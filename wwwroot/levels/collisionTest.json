@@ -21,8 +21,8 @@
         {
             "x": 1000,
             "y": 32,
-            "w": 100,
-            "h": 100,
+            "w": 128,
+            "h": 128,
             "solid": true,
             "imageSource": "/img/stone_big.png"
         },
@@ -30,7 +30,7 @@
             "x": 1500,
             "y": 0,
             "w": 32,
-            "h": 500,
+            "h": 512,
             "solid": true,
             "imageSource": "/img/stone.png"
         }

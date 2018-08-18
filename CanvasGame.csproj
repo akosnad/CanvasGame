@@ -27,4 +27,9 @@
     <Exec Command="npx gulp" />
   </Target>
 
+  <Target Name="SWPrecache" BeforeTargets="BeforeBuild">
+    <Message Text="Running sw-precache..." Importance="high"></Message>
+    <Exec Command="npx sw-precache --root=wwwroot --config=sw-precache.conf.js" />
+  </Target>
+
 </Project>

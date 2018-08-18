@@ -8,7 +8,8 @@
     "@types/jquery": "^3.3.5",
     "gulp": "^3.9.1",
     "gulp-pug": "^4.0.1",
-    "typescript": "^3.0.1"
+    "typescript": "^3.0.1",
+    "sw-precache": "^5.2.1"
   },
   "dependencies": {
     "jquery": "^3.3.1",
