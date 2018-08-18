@@ -10,6 +10,9 @@ namespace CanvasGame {
         image = document.createElement("img");
         imageSource: string;
         imageReady = false;
+        pattern: CanvasPattern | undefined;
+        private matrixProvider = <any>document.getElementById("matrix-provider");
+        private matrix = <SVGMatrix>this.matrixProvider.createSVGMatrix();
 
         constructor(imageSource: string, xInitial: number, yInitial: number) {
             this.imageSource = imageSource;
@@ -27,6 +30,8 @@ namespace CanvasGame {
             this.imageReady = true;
             if (this.hitboxHeight == 0) { this.hitboxHeight = this.image.height; }
             if (this.hitboxWidth == 0) { this.hitboxWidth = this.image.width; }
+            let c = <CanvasRenderingContext2D>document.createElement("canvas").getContext('2d');
+            this.pattern = c.createPattern(this.image, "repeat");
         }
         reset() {
             this.x = this.xInitial;
@@ -35,11 +40,25 @@ namespace CanvasGame {
         tick(timeDelta: number, otherSprites: Array<Sprite>) { }
         draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number) {
             if (this.imageReady) {
-                ctx.drawImage(
-                    this.image,
-                    this.x - offsetX,
-                    ctx.canvas.height - this.y - this.hitboxHeight + offsetY
-                );
+                if (this.hitboxHeight == this.image.height && this.hitboxWidth == this.image.width) {
+                    ctx.drawImage(
+                        this.image,
+                        this.x - offsetX,
+                        ctx.canvas.height - this.y - this.hitboxHeight + offsetY
+                    );
+                } else {
+                    (<CanvasPattern>this.pattern).setTransform(this.matrix.translate(
+                        ctx.canvas.width - offsetX,
+                        offsetY
+                    ));
+                    ctx.fillStyle = <CanvasPattern>this.pattern;
+                    ctx.fillRect(
+                        this.x - offsetX,
+                        ctx.canvas.height - this.y - this.hitboxHeight + offsetY,
+                        this.hitboxWidth,
+                        this.hitboxHeight,
+                    );
+                }
             }
         }
     }

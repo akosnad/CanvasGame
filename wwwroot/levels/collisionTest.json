@@ -20,9 +20,9 @@
             "xInitial": 1000,
             "yInitial": 32,
             "hitboxWidth": 100,
-            "hitboxHeight": 32,
+            "hitboxHeight": 100,
             "solid": true,
-            "imageSource": "/img/stone.png"
+            "imageSource": "/img/stone_big.png"
         },
         {
             "xInitial": 1500,
