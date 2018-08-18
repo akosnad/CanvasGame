@@ -29,6 +29,8 @@ namespace CanvasGame {
         ctx: CanvasRenderingContext2D;
         private pauseIndicator: HTMLElement;
         private levelSelector: HTMLElement;
+        private levelEditorToggle: HTMLElement;
+        private levelEditorMenu: HTMLElement;
         private title = "Canvas Game";
         constructor(level: Level) {
             document.title = this.title;
@@ -41,13 +43,12 @@ namespace CanvasGame {
             window.addEventListener('keypress', e => {
                 if (e.code == PauseKeyCode) {
                     self.isPaused = !self.isPaused;
+                    self.updateWindowTitle();
                     if (self.isPaused) {
-                        document.title = `${this.title} (Paused)`;
                         $(self.pauseIndicator).show();
                         $(self.pauseIndicator).addClass("slide-in-blurred-left");
                         $(self.pauseIndicator).removeClass("slide-out-blurred-right");
                     } else {
-                        document.title = this.title;
                         $(self.pauseIndicator).removeClass("slide-in-blurred-left");
                         $(self.pauseIndicator).addClass("slide-out-blurred-right");
                     }
@@ -76,6 +77,7 @@ namespace CanvasGame {
                 levelButton.setAttribute("class", "list-group-item wave-effect");
                 levelButton.setAttribute("level-path", level.path);
                 levelButton.innerText = level.name;
+                levelButton.style.cursor = "pointer";
                 var self = this;
                 levelButton.addEventListener("click", (e) => {
                     self.changeLevel(<string>(<Element>e.target).getAttribute("level-path"));
@@ -83,15 +85,43 @@ namespace CanvasGame {
                 $(this.levelSelector).append(levelButton);
             }
 
+            self = this;
+            this.levelEditorToggle = <HTMLElement>document.getElementById("level-editor-toggle");
+            this.levelEditorToggle.addEventListener("click", (e) => {
+                LevelEditor.editorModeEnabled = !LevelEditor.editorModeEnabled;
+                if(LevelEditor.editorModeEnabled) {
+                    $(self.levelEditorMenu).show();
+                } else {
+                    $(self.levelEditorMenu).hide();
+                }
+                self.updateWindowTitle();
+            });
+
+            this.levelEditorMenu = <HTMLElement>document.getElementById("level-editor-menu");
+
             this.background = new Background(level.backgroundImageSource);
             this.player = new Player(level.playerImageSource, level.playerXInitial, level.playerYInitial);
             this.loadLevel(level);
             this.lastUpdate = Date.now();
         }
+        updateWindowTitle() {
+            if (LevelEditor.editorModeEnabled) {
+                if (!this.isPaused) {
+                    document.title = `${this.title} Level Editor - ${this.level.name}`;
+                } else {
+                    document.title = `${this.title} Level Editor - ${this.level.name} (Paused)`;
+                }
+            } else {
+                if (!this.isPaused) {
+                    document.title = `${this.title} - ${this.level.name}`;
+                } else {
+                    document.title = `${this.title} - ${this.level.name} (Paused)`;
+                }
+            }
+        }
         loadLevel(level: Level) {
-            this.title = `${this.title} - ${level.name}`;
-            document.title = this.title;
             this.level = level;
+            this.updateWindowTitle();
             this.background = new Background(level.backgroundImageSource);
             this.structures = new Array<Structure>();
             this.sprites = new Array<Sprite>();
@@ -100,7 +130,7 @@ namespace CanvasGame {
                 sprite.solid = levelSprite.solid;
                 this.sprites.push(sprite);
             }
-            for(let levelStructure of level.structures) {
+            for (let levelStructure of level.structures) {
                 let structure = new Structure(levelStructure.imageSource, levelStructure.x, levelStructure.y, levelStructure.w, levelStructure.h);
                 structure.solid = levelStructure.solid;
                 this.structures.push(structure);
@@ -132,23 +162,27 @@ namespace CanvasGame {
             let now = Date.now();
             let delta = now - this.lastUpdate;
             delta = delta / 1000;
-            if (!this.isPaused) {
-                this.tickSprites(delta);
-                this.scrollScreen();
+            if (LevelEditor.editorModeEnabled) {
+                LevelEditor.loop(this.ctx, delta, this.mouseX, this.mouseY);
+            } else {
+                if (!this.isPaused) {
+                    this.tickSprites(delta);
+                    this.scrollScreen();
+                }
+                this.ctx.fillStyle = "#000000";
+                this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+
+                this.background.draw(this.ctx, this.scrollX, this.scrollY);
+                this.drawStructures();
+                this.drawSprites();
+
+                Debug.displayDebugInfo(this, delta);
+                this.multi.sendPlayerData(this.player, this.level, this.isPaused);
             }
-            this.ctx.fillStyle = "#000000";
-            this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-
-            this.background.draw(this.ctx, this.scrollX, this.scrollY);
-            this.drawStructures();
-            this.drawSprites();
-
-            Debug.displayDebugInfo(this, delta);
             if (this.isPaused) {
                 this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
                 this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
             }
-            this.multi.sendPlayerData(this.player, this.level, this.isPaused);
             this.lastUpdate = now;
             window.requestAnimationFrame(() => { this.gameLoop(); });
             // setTimeout(() => {
@@ -171,7 +205,7 @@ namespace CanvasGame {
         }
 
         private drawStructures() {
-            for(let structure of this.structures) {
+            for (let structure of this.structures) {
                 structure.draw(this.ctx, this.scrollX, this.scrollY);
             }
         }
