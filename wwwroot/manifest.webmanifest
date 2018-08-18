@@ -5,7 +5,7 @@
       {
         "src": "/img/hero_big.png",
         "type": "image/png",
-        "sizes": "any"
+        "sizes": "144x144"
       }
     ],
     "name": "Canvas Game",

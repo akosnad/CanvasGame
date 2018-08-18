@@ -1,6 +1,6 @@
 namespace CanvasGame {
-    let PauseKeyCode = 27; // Esc
-    let DebugKeyCode = 119; // F8
+    let PauseKeyCode = "Escape";
+    let DebugKeyCode = "F8";
 
     export var otherPlayers = new Array<OtherPlayer>();
 
@@ -39,7 +39,7 @@ namespace CanvasGame {
             this.resizeCanvas();
             self = this;
             window.addEventListener('keypress', e => {
-                if (e.keyCode == PauseKeyCode) {
+                if (e.code == PauseKeyCode) {
                     self.isPaused = !self.isPaused;
                     if (self.isPaused) {
                         document.title = `${this.title} (Paused)`;
@@ -55,7 +55,7 @@ namespace CanvasGame {
             });
             self = this;
             window.addEventListener('keypress', e => {
-                if (e.keyCode == DebugKeyCode) {
+                if (e.code == DebugKeyCode) {
                     Debug.debugInfoEnabled = !Debug.debugInfoEnabled;
                     e.preventDefault();
                 }

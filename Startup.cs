@@ -38,7 +38,7 @@ namespace CanvasGame
             app.UseRewriter(new RewriteOptions().AddRewrite(@"^$", "index.html", true));
 
             var provider = new FileExtensionContentTypeProvider();
-            // provider.Mappings[".pde"] = "text/plain";
+            provider.Mappings[".webmanifest"] = "application/json";
 
             app.UseStaticFiles(new StaticFileOptions
             {
