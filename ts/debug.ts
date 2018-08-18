@@ -32,8 +32,8 @@ namespace CanvasGame {
             game.ctx.fillText(game.player.x.toString(), 20, 24);
             game.ctx.fillText(game.player.y.toString(), 20, 36);
             game.ctx.fillText("scroll", 220, 12);
-            game.ctx.fillText(scrollX.toString(), 220, 24);
-            game.ctx.fillText(scrollY.toString(), 220, 36);
+            game.ctx.fillText(game.scrollX.toString(), 220, 24);
+            game.ctx.fillText(game.scrollY.toString(), 220, 36);
             game.ctx.fillText("relative pos", 420, 12);
             game.ctx.fillText((game.player.x - scrollX).toString(), 420, 24);
             game.ctx.fillText((game.player.y - scrollY).toString(), 420, 36);
