@@ -22,7 +22,7 @@
             "hitboxWidth": 100,
             "hitboxHeight": 32,
             "solid": true,
-            "imageSource": "/img/monster.png"
+            "imageSource": "/img/stone.png"
         },
         {
             "xInitial": 1500,
@@ -30,7 +30,7 @@
             "hitboxWidth": 32,
             "hitboxHeight": 500,
             "solid": true,
-            "imageSource": "/img/monster.png"
+            "imageSource": "/img/stone.png"
         }
     ],
     "id": 123456,

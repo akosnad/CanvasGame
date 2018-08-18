@@ -1,5 +1,4 @@
 /// <reference path="../node_modules/@aspnet/signalr/dist/esm/index.d.ts"/>
-/// <reference path="logic.ts" />
 
 namespace CanvasGame {
     // Own data that gets sent to other players
