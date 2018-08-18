@@ -15,26 +15,28 @@
             "hitboxHeight": 0,
             "solid": true,
             "imageSource": "/img/monster.png"
-        },
+        }
+    ],
+    "structures": [
         {
-            "xInitial": 1000,
-            "yInitial": 32,
-            "hitboxWidth": 100,
-            "hitboxHeight": 100,
+            "x": 1000,
+            "y": 32,
+            "w": 100,
+            "h": 100,
             "solid": true,
             "imageSource": "/img/stone_big.png"
         },
         {
-            "xInitial": 1500,
-            "yInitial": 0,
-            "hitboxWidth": 32,
-            "hitboxHeight": 500,
+            "x": 1500,
+            "y": 0,
+            "w": 32,
+            "h": 500,
             "solid": true,
             "imageSource": "/img/stone.png"
         }
     ],
     "id": 123456,
-    "playerXInitial": 0,
+    "playerXInitial": 1200,
     "playerYInitial": 0,
     "playerImageSource": "/img/hero.png",
     "backgroundImageSource": "",

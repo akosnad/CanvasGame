@@ -63,7 +63,7 @@ namespace CanvasGame {
             this.lastCleanupTimestamp = Date.now();
             otherPlayers.forEach((player, index) => {
                 if (player.lastUpdateTimestamp + this.cleanupInterval < this.lastCleanupTimestamp) {
-                    console.log("Cleaning up player: ", player);
+                    Debug.log("Cleaning up old player: ", player);
                     otherPlayers.splice(index);
                 }
             });

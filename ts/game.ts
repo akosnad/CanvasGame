@@ -15,6 +15,7 @@ namespace CanvasGame {
         level: Level = new Level();
         levelList: LevelList;
         sprites = new Array<Sprite>();
+        structures = new Array<Structure>();
         player: Player;
         background: Background;
         scrollX = 0;
@@ -28,7 +29,9 @@ namespace CanvasGame {
         ctx: CanvasRenderingContext2D;
         private pauseIndicator: HTMLElement;
         private levelSelector: HTMLElement;
+        private title = "Canvas Game";
         constructor(level: Level) {
+            document.title = this.title;
             this.canvas = <HTMLCanvasElement>document.getElementById("game-canvas");
             this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
             var self = this;
@@ -39,10 +42,12 @@ namespace CanvasGame {
                 if (e.keyCode == PauseKeyCode) {
                     self.isPaused = !self.isPaused;
                     if (self.isPaused) {
+                        document.title = `${this.title} (Paused)`;
                         $(self.pauseIndicator).show();
                         $(self.pauseIndicator).addClass("slide-in-blurred-left");
                         $(self.pauseIndicator).removeClass("slide-out-blurred-right");
                     } else {
+                        document.title = this.title;
                         $(self.pauseIndicator).removeClass("slide-in-blurred-left");
                         $(self.pauseIndicator).addClass("slide-out-blurred-right");
                     }
@@ -84,15 +89,21 @@ namespace CanvasGame {
             this.lastUpdate = Date.now();
         }
         loadLevel(level: Level) {
+            this.title = `${this.title} - ${level.name}`;
+            document.title = this.title;
             this.level = level;
             this.background = new Background(level.backgroundImageSource);
+            this.structures = new Array<Structure>();
             this.sprites = new Array<Sprite>();
             for (let levelSprite of level.sprites) {
                 let sprite = new Sprite(levelSprite.imageSource, levelSprite.xInitial, levelSprite.yInitial);
                 sprite.solid = levelSprite.solid;
-                sprite.hitboxHeight = levelSprite.hitboxHeight;
-                sprite.hitboxWidth = levelSprite.hitboxWidth;
                 this.sprites.push(sprite);
+            }
+            for(let levelStructure of level.structures) {
+                let structure = new Structure(levelStructure.imageSource, levelStructure.x, levelStructure.y, levelStructure.w, levelStructure.h);
+                structure.solid = levelStructure.solid;
+                this.structures.push(structure);
             }
             this.player = new Player(level.playerImageSource, level.playerXInitial, level.playerYInitial);
             this.reset();
@@ -111,9 +122,9 @@ namespace CanvasGame {
                 sprite.reset();
             }
             this.player.reset();
+            this.scrollScreen();
         }
         start() {
-            // $(this.pauseIndicator).text("Paused");
             this.multi.start();
             this.gameLoop();
         }
@@ -129,7 +140,7 @@ namespace CanvasGame {
             this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
             this.background.draw(this.ctx, this.scrollX, this.scrollY);
-
+            this.drawStructures();
             this.drawSprites();
 
             Debug.displayDebugInfo(this, delta);
@@ -159,6 +170,12 @@ namespace CanvasGame {
             this.player.draw(this.ctx, this.scrollX, this.scrollY);
         }
 
+        private drawStructures() {
+            for(let structure of this.structures) {
+                structure.draw(this.ctx, this.scrollX, this.scrollY);
+            }
+        }
+
         private scrollScreen() {
             if (this.player.x - this.scrollX > this.ctx.canvas.width * 0.8) {
                 this.scrollX += this.player.x - this.scrollX - (this.ctx.canvas.width * 0.8);
@@ -183,9 +200,9 @@ namespace CanvasGame {
         private tickSprites(delta: number) {
             var self = this;
             for (let sprite of this.sprites) {
-                sprite.tick(delta, self.sprites);
+                sprite.tick(delta, self.sprites, self.structures);
             }
-            this.player.tick(delta, this.sprites);
+            this.player.tick(delta, this.sprites, self.structures);
         }
 
         addSprite(sprite: Sprite) {

@@ -9,9 +9,6 @@ namespace CanvasGame {
                 url: sourceFileURL,
                 success: (data) => {
                     levelData = <Level>data;
-                },
-                error: (e) => {
-
                 }
             });
             levelData.sourceFile = sourceFileURL;
@@ -35,6 +32,7 @@ namespace CanvasGame {
 
     export class Level {
         sprites = new Array<LevelSprite>();
+        structures = new Array<LevelStructure>();
         id = 0;
         playerXInitial = 0;
         playerYInitial = 0;
@@ -47,8 +45,6 @@ namespace CanvasGame {
     class LevelSprite {
         xInitial: number;
         yInitial: number;
-        hitboxWidth: number;
-        hitboxHeight: number;
         solid: boolean;
         imageSource: string;
         constructor(sprite: Sprite) {
@@ -56,8 +52,23 @@ namespace CanvasGame {
             this.yInitial = sprite.yInitial;
             this.solid = sprite.solid;
             this.imageSource = sprite.imageSource;
-            this.hitboxWidth = sprite.hitboxWidth;
-            this.hitboxHeight = sprite.hitboxHeight;
+        }
+    }
+
+    class LevelStructure {
+        x: number;
+        y: number;
+        w: number;
+        h: number;
+        solid: boolean;
+        imageSource: string;
+        constructor(structure: Structure) {
+            this.x = structure.x;
+            this.y = structure.y;
+            this.w = structure.w;
+            this.h = structure.h;
+            this.solid = structure.solid;
+            this.imageSource = structure.imageSource;
         }
     }
 

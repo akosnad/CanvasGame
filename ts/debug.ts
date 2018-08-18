@@ -4,6 +4,9 @@ namespace CanvasGame {
         static displayDebugInfo(game: Game, delta: number) {
             if (this.debugInfoEnabled) {
                 Debug.drawDebugText(game.ctx, game.player, game.scrollX, game.scrollY, delta * 1000);
+                for (let structure of game.structures) {
+                    Debug.drawStructureHitbox(game.ctx, structure, "rgba(255, 255, 0, 0.25)", game.scrollX, game.scrollY);
+                }
                 for (let sprite of game.sprites) {
                     Debug.drawSpriteHitbox(game.ctx, sprite, "rgba(0, 255, 0, 0.25)", game.scrollX, game.scrollY);
                 }
@@ -61,6 +64,12 @@ namespace CanvasGame {
             ctx.font = "12px Roboto";
             ctx.fillText(": Other players' hitbox", 16, 110);
 
+            ctx.fillStyle = "rgb(255, 255, 0)";
+            ctx.fillRect(0, 124, 12, 12);
+            ctx.fillStyle = "#FFFFFF";
+            ctx.font = "12px Roboto";
+            ctx.fillText(": Structures' hitbox", 16, 134);
+
             ctx.fillText("level", 220, 62);
             ctx.fillText(game.level.name, 220, 74);
 
@@ -70,13 +79,21 @@ namespace CanvasGame {
             ctx.fillText("level id", 620, 62);
             ctx.fillText(game.level.id.toString(), 620, 74);
         }
+        private static drawStructureHitbox(ctx: CanvasRenderingContext2D, structure: Structure, color: string, offsetX: number, offsetY: number) {
+            ctx.fillStyle = color;
+            ctx.fillRect(
+                structure.x - offsetX,
+                ctx.canvas.height - structure.y - structure.h + offsetY,
+                structure.w,
+                structure.h);
+        }
         private static drawSpriteHitbox(ctx: CanvasRenderingContext2D, sprite: Sprite, color: string, offsetX: number, offsetY: number) {
             ctx.fillStyle = color;
             ctx.fillRect(
                 sprite.x - offsetX,
-                ctx.canvas.height - sprite.y - sprite.hitboxHeight + offsetY,
-                sprite.hitboxWidth,
-                sprite.hitboxHeight);
+                ctx.canvas.height - sprite.y - sprite.image.height + offsetY,
+                sprite.image.width,
+                sprite.image.height);
         }
         private static drawPointer(ctx: CanvasRenderingContext2D, x: number, y: number) {
             ctx.fillStyle = "#FFFFFF";
