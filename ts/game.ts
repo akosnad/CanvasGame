@@ -30,7 +30,7 @@ namespace CanvasGame {
         private pauseIndicator: HTMLElement;
         private levelSelector: HTMLElement;
         private levelEditorToggle: HTMLElement;
-        private levelEditorMenu: HTMLElement;
+        levelEditor: LevelEditor;
         private title = "Canvas Game";
         constructor(level: Level) {
             document.title = this.title;
@@ -85,19 +85,18 @@ namespace CanvasGame {
                 $(this.levelSelector).append(levelButton);
             }
 
+            this.levelEditor = new LevelEditor(this);
+
             self = this;
             this.levelEditorToggle = <HTMLElement>document.getElementById("level-editor-toggle");
             this.levelEditorToggle.addEventListener("click", (e) => {
-                LevelEditor.editorModeEnabled = !LevelEditor.editorModeEnabled;
-                if(LevelEditor.editorModeEnabled) {
-                    $(self.levelEditorMenu).show();
+                if (self.levelEditor.editorModeEnabled) {
+                    self.levelEditor.disableEditorMode();
                 } else {
-                    $(self.levelEditorMenu).hide();
+                    self.levelEditor.enableEditorMode();
                 }
                 self.updateWindowTitle();
             });
-
-            this.levelEditorMenu = <HTMLElement>document.getElementById("level-editor-menu");
 
             this.background = new Background(level.backgroundImageSource);
             this.player = new Player(level.playerImageSource, level.playerXInitial, level.playerYInitial);
@@ -105,7 +104,7 @@ namespace CanvasGame {
             this.lastUpdate = Date.now();
         }
         updateWindowTitle() {
-            if (LevelEditor.editorModeEnabled) {
+            if (this.levelEditor.editorModeEnabled) {
                 if (!this.isPaused) {
                     document.title = `${this.title} Level Editor - ${this.level.name}`;
                 } else {
@@ -122,6 +121,7 @@ namespace CanvasGame {
         loadLevel(level: Level) {
             this.level = level;
             this.updateWindowTitle();
+            this.levelEditor.selectObject(-1, -1);
             this.background = new Background(level.backgroundImageSource);
             this.structures = new Array<Structure>();
             this.sprites = new Array<Sprite>();
@@ -162,32 +162,31 @@ namespace CanvasGame {
             let now = Date.now();
             let delta = now - this.lastUpdate;
             delta = delta / 1000;
-            if (LevelEditor.editorModeEnabled) {
-                LevelEditor.loop(this.ctx, delta, this.mouseX, this.mouseY);
-            } else {
-                if (!this.isPaused) {
-                    this.tickSprites(delta);
-                    this.scrollScreen();
-                }
-                this.ctx.fillStyle = "#000000";
-                this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-
-                this.background.draw(this.ctx, this.scrollX, this.scrollY);
-                this.drawStructures();
-                this.drawSprites();
-
-                Debug.displayDebugInfo(this, delta);
-                this.multi.sendPlayerData(this.player, this.level, this.isPaused);
+            if (!this.isPaused && !this.levelEditor.editorModeEnabled) {
+                this.tickSprites(delta);
+                this.scrollScreen();
             }
+            this.ctx.fillStyle = "#000000";
+            this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+            
+            this.background.draw(this.ctx, this.scrollX, this.scrollY);
+            this.drawStructures();
+            this.drawSprites();
+            
+            if(this.levelEditor.editorModeEnabled) {
+                this.levelEditor.loop();
+            } else {
+                Debug.displayDebugInfo(this, delta);
+            }
+
+            this.multi.sendPlayerData(this.player, this.level, this.isPaused);
+
             if (this.isPaused) {
                 this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
                 this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
             }
             this.lastUpdate = now;
             window.requestAnimationFrame(() => { this.gameLoop(); });
-            // setTimeout(() => {
-            //     this.gameLoop();
-            // }, 50); // render every 50ms for testing
         }
         private drawSprites() {
             // Draw game sprites

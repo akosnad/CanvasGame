@@ -1,4 +1,5 @@
 extends layout/head
+include layout/mixins
 
 append script
   script(src='/js/game.js')
@@ -7,18 +8,45 @@ append style
   link(rel='stylesheet', href='/index.css')
 
 block body
-  canvas#game-canvas.img-fluid
+  canvas#game-canvas
   svg#matrix-provider(style='display:none')
-  div#pause-indicator
-    div.row
-      div.col-md-10.col-sm-8
-      div.col-md-2.col-sm-4.level-selector.card.card-body.unselectable
+  div.row
+    div.col-md-2.col-sm-4
+      div#level-editor-menu.card.unselectable(style='display:none;padding:15px')
+        h4.card-title Level Editor Menu
+        hr
+        div#level-editor-general
+          h5.card-subtitle Level settings
+          +levelEditorOptionReadonly("Level id", "level-id")
+          +levelEditorOption("Level name", "level-name")
+          +levelEditorOption("Background image URL", 'level-bg')
+
+        div#level-editor-sprite
+          h5.card-subtitle Sprite
+          +levelEditorOption("Sprite image URL", "sprite-img")
+          +levelEditorOptionBool("Solid", "sprite-solid")
+          +levelEditorOptionCoord("Sprite spawn point", "sprite-initial")
+
+        div#level-editor-structure
+          h5.card-subtitle Structure
+          +levelEditorOption("Structure image URL", "structure-img")
+          +levelEditorOptionBool("Solid", "structure-solid")
+          +levelEditorOptionCoord("Structure position", "structure-pos")
+          +levelEditorOptionWidthHeight("Structure width & height", "structure-wh")
+
+        div#level-editor-player
+          h5.card-subtitle Player
+          +levelEditorOption("Player image URL", "player-img")
+          +levelEditorOptionCoord("Player spawn point", "player-initial")
+
+
+    div.col-md-8.col-sm-4
+
+    div.col-md-2.col-sm-4
+      div#pause-indicator.card.unselectable(style="padding:15px")
         h2.card-title Canvas Game
         h4.card-subtitle Paused
         hr
         h5.card-text Levels
         ul.list-group.list-group-flush#level-selector
-        h5.card-text.btn.btn-indigo#level-editor-toggle(data-toggle="button", aria-pressed="false", autocomplete="off") Level Editor
-        div.card-body#level-editor-menu(style='display:none')
-          h4 Level Editor menu (WIP)
-          hr
+        button.card-text.btn.btn-indigo#level-editor-toggle(data-toggle="button", aria-pressed="false", autocomplete="off") Level Editor

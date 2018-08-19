@@ -3,16 +3,12 @@
         {
             "xInitial": 500,
             "yInitial": 48,
-            "hitboxWidth": 0,
-            "hitboxHeight": 0,
             "solid": false,
             "imageSource": "/img/monster.png"
         },
         {
             "xInitial": 700,
             "yInitial": 0,
-            "hitboxWidth": 0,
-            "hitboxHeight": 0,
             "solid": true,
             "imageSource": "/img/monster.png"
         }
