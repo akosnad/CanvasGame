@@ -7,6 +7,8 @@ namespace CanvasGame {
         // Level Editor menu elements
         private LEM = <HTMLElement>document.getElementById("level-editor-menu");
 
+        private LEMExport = <HTMLElement>document.getElementById("editor-export");
+
         private LEMGeneral = <HTMLElement>document.getElementById("editor-general");
         private LEMGeneralApply = <HTMLElement>document.getElementById("editor-general-set");
         private LEMGeneralReset = <HTMLElement>document.getElementById("editor-general-reset");
@@ -49,6 +51,8 @@ namespace CanvasGame {
                 self.selectObject(e.x, e.y);
             });
 
+            this.LEMExport.addEventListener("click", (e) => { self.exportLevel(); });
+
             this.LEMGeneralApply.addEventListener("click", (e) => { self.applyEditorMenuGeneral(); });
             this.LEMGeneralReset.addEventListener("click", (e) => { self.updateEditorMenuGeneral(); });
             this.LEMPlayerApply.addEventListener("click", (e) => { self.applyEditorMenuPlayer(); });
@@ -67,6 +71,19 @@ namespace CanvasGame {
             this.editorModeEnabled = false;
             $(this.LEM).hide();
             this.game.reset();
+        }
+        private exportLevel() {
+            let level = new Level();
+            level = this.game.level;
+            level.sprites = new Array<LevelSprite>();
+            level.structures = new Array<LevelStructure>();
+            for(let sprite of this.game.sprites) {
+                level.sprites.push(new LevelSprite(sprite));
+            }
+            for(let structure of this.game.structures) {
+                level.structures.push(new LevelStructure(structure));
+            }
+            LevelLoader.export(level);
         }
         private switchEditorMenu() {
             if (typeof this.selectedObject != "undefined" && this.selectedObject != null) {

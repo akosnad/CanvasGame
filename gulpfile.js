@@ -24,6 +24,9 @@ gulp.task('copy-dist', function () {
         .pipe(gulp.dest('./wwwroot/lib/js'));
     gulp.src('./node_modules/@aspnet/signalr/dist/browser/signalr.min.js')
         .pipe(gulp.dest('./wwwroot/lib/js'));
+    gulp.src('./node_modules/file-saver/FileSaver.min.js')
+        .pipe(gulp.dest('./wwwroot/lib/js'));
+    
 
     gulp.src('./node_modules/mdbootstrap/css/bootstrap.min.css')
         .pipe(gulp.dest('./wwwroot/lib/css'));

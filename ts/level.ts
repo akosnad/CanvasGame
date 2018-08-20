@@ -15,6 +15,11 @@ namespace CanvasGame {
             Debug.log("Level Loaded: ", levelData);
             return levelData;
         }
+        static export(level: Level) {
+            level.sourceFile = `${level.id}.json`;
+            let blob = new Blob([JSON.stringify(level)], { type: "application/json;charset=utf-8" });
+            saveAs(blob, `${level.id}.json`);
+        }
         static getList() {
             let levels = new LevelList();
             $.ajax({
@@ -42,7 +47,7 @@ namespace CanvasGame {
         name = "";
     }
 
-    class LevelSprite {
+    export class LevelSprite {
         xInitial: number;
         yInitial: number;
         solid: boolean;
@@ -55,7 +60,7 @@ namespace CanvasGame {
         }
     }
 
-    class LevelStructure {
+    export class LevelStructure {
         x: number;
         y: number;
         w: number;
@@ -72,7 +77,7 @@ namespace CanvasGame {
         }
     }
 
-    interface LevelDescription {
+    export interface LevelDescription {
         name: string;
         path: string;
     }
