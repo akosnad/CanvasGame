@@ -7,7 +7,15 @@ namespace CanvasGame {
         // Level Editor menu elements
         private LEM = <HTMLElement>document.getElementById("level-editor-menu");
 
+        private LEMNewLevel = <HTMLElement>document.getElementById("editor-new-level");
+        private LEMNewSprite = <HTMLElement>document.getElementById("editor-new-sprite");
+        private LEMNewStructure = <HTMLElement>document.getElementById("editor-new-structure");
         private LEMExport = <HTMLElement>document.getElementById("editor-export");
+
+        private LEMList = <HTMLElement>document.getElementById("editor-list");
+        private LEMListPlayer = <HTMLElement>document.getElementById("editor-list-player");
+        private LEMListSprite = <HTMLElement>document.getElementById("editor-list-sprite");
+        private LEMListStructure = <HTMLElement>document.getElementById("editor-list-structure");
 
         private LEMGeneral = <HTMLElement>document.getElementById("editor-general");
         private LEMGeneralApply = <HTMLElement>document.getElementById("editor-general-set");
@@ -44,46 +52,131 @@ namespace CanvasGame {
         constructor(game: Game) {
             this.game = game;
 
+            $(this.LEMList).hide();
+
             this.switchEditorMenu();
 
             var self = this;
             this.game.ctx.canvas.addEventListener("click", (e) => {
-                self.selectObject(e.x, e.y);
+                self.selectObjectByPos(e.x, e.y);
             });
 
-            this.LEMExport.addEventListener("click", (e) => { self.exportLevel(); });
+            this.LEMNewLevel.addEventListener("click", () => { self.newLevel(); });
+            this.LEMNewSprite.addEventListener("click", () => { self.newSprite(); });
+            this.LEMNewStructure.addEventListener("click", () => { self.newStructure(); });
+            this.LEMExport.addEventListener("click", () => { self.exportLevel(); });
 
-            this.LEMGeneralApply.addEventListener("click", (e) => { self.applyEditorMenuGeneral(); });
-            this.LEMGeneralReset.addEventListener("click", (e) => { self.updateEditorMenuGeneral(); });
-            this.LEMPlayerApply.addEventListener("click", (e) => { self.applyEditorMenuPlayer(); });
-            this.LEMPlayerReset.addEventListener("click", (e) => { self.updateEditorMenuPlayer(); });
-            this.LEMSpriteApply.addEventListener("click", (e) => { self.applyEditorMenuSprite(); });
-            this.LEMSpriteReset.addEventListener("click", (e) => { self.updateEditorMenuSprite(); });
-            this.LEMStructureApply.addEventListener("click", (e) => { self.applyEditorMenuStructure(); });
-            this.LEMStructureReset.addEventListener("click", (e) => { self.updateEditorMenuStructure(); });
+            this.LEMGeneralApply.addEventListener("click", () => { self.applyEditorMenuGeneral(); });
+            this.LEMGeneralReset.addEventListener("click", () => { self.updateEditorMenuGeneral(); });
+            this.LEMPlayerApply.addEventListener("click", () => { self.applyEditorMenuPlayer(); });
+            this.LEMPlayerReset.addEventListener("click", () => { self.updateEditorMenuPlayer(); });
+            this.LEMSpriteApply.addEventListener("click", () => { self.applyEditorMenuSprite(); });
+            this.LEMSpriteReset.addEventListener("click", () => { self.updateEditorMenuSprite(); });
+            this.LEMStructureApply.addEventListener("click", () => { self.applyEditorMenuStructure(); });
+            this.LEMStructureReset.addEventListener("click", () => { self.updateEditorMenuStructure(); });
+
+            this.LEMListPlayer.addEventListener("click", () => { self.selectPlayer(); });
+            this.LEMListPlayer.style.cursor = "pointer";
+
+            this.updateList();
         }
         enableEditorMode() {
             this.editorModeEnabled = true;
             $(this.LEM).show();
+            $(this.LEMList).show();
             this.game.reset();
         }
         disableEditorMode() {
             this.editorModeEnabled = false;
             $(this.LEM).hide();
+            $(this.LEMList).hide();
             this.game.reset();
+        }
+        private newLevel() {
+            let level = new Level();
+            level.id = Date.now();
+            level.playerImageSource = "/img/hero.png";
+            this.game.loadLevel(level);
+            this.selectedObject = null;
+            this.switchEditorMenu();
         }
         private exportLevel() {
             let level = new Level();
             level = this.game.level;
             level.sprites = new Array<LevelSprite>();
             level.structures = new Array<LevelStructure>();
-            for(let sprite of this.game.sprites) {
+            for (let sprite of this.game.sprites) {
                 level.sprites.push(new LevelSprite(sprite));
             }
-            for(let structure of this.game.structures) {
+            for (let structure of this.game.structures) {
                 level.structures.push(new LevelStructure(structure));
             }
             LevelLoader.export(level);
+        }
+        private newSprite() {
+            this.selectedObject = new Sprite("/img/monster.png", 0, 0);
+            this.game.sprites.push(this.selectedObject);
+            this.switchEditorMenu();
+        }
+        private newStructure() {
+            this.selectedObject = new Structure("/img/stone_big.png", 0, 0, 32, 32);
+            this.game.structures.push(this.selectedObject);
+            this.switchEditorMenu();
+        }
+        updateList() {
+            $(this.LEMListSprite).empty();
+            $(this.LEMListStructure).empty();
+            this.game.sprites.forEach((sprite, i) => {
+                let element = document.createElement("li");
+                element.setAttribute("class", "list-group-item wave-effect");
+                element.innerText = `${i}: ${sprite.imageSource}`;
+                element.style.cursor = "pointer";
+                element.setAttribute("index", i.toString());
+
+                let deleteButton = document.createElement("button");
+                deleteButton.setAttribute("class", "btn btn-sm btn-danger");
+                deleteButton.setAttribute("style", "font-size: 2rem;padding: 0.3rem;line-height:1.2rem");
+                deleteButton.innerHTML = "&times;";
+                deleteButton.setAttribute("index", i.toString());
+
+                element.appendChild(deleteButton);
+
+                var self = this;
+                element.addEventListener("click", (e) => {
+                    self.selectSprite(parseInt(<string>(<HTMLElement>e.target).getAttribute("index")));
+                });
+                deleteButton.addEventListener("click", (e) => {
+                    self.removeSprite(parseInt(<string>(<HTMLElement>e.target).getAttribute("index")));
+                    self.selectObjectByPos(-1, -1);
+                });
+                $(this.LEMListSprite).append(element);
+            });
+            this.game.structures.forEach((structure, i) => {
+                let element = document.createElement("li");
+                element.setAttribute("class", "list-group-item wave-effect");
+                element.innerText = `${i}: ${structure.imageSource}`;
+                element.style.cursor = "pointer";
+                element.setAttribute("index", i.toString());
+
+                let deleteButton = document.createElement("button");
+                deleteButton.setAttribute("class", "btn btn-sm btn-danger");
+                deleteButton.setAttribute("style", "font-size: 2rem;padding: 0.3rem;line-height:1.2rem");
+                deleteButton.innerHTML = "&times;";
+                deleteButton.setAttribute("index", i.toString());
+
+                element.appendChild(deleteButton);
+
+                var self = this;
+                element.addEventListener("click", (e) => {
+                    self.selectStructure(parseInt(<string>(<HTMLElement>e.target).getAttribute("index")));
+                });
+                $(this.LEMListStructure).append(element);
+                deleteButton.addEventListener("click", (e) => {
+                    self.removeStructure(parseInt(<string>(<HTMLElement>e.target).getAttribute("index")));
+                    self.selectObjectByPos(-1, -1);
+                });
+                $(this.LEMListStructure).append(element);
+            });
         }
         private switchEditorMenu() {
             if (typeof this.selectedObject != "undefined" && this.selectedObject != null) {
@@ -128,6 +221,8 @@ namespace CanvasGame {
             this.game.level.backgroundImageSource = <string>$(this.LEMGeneralBgUrl).val();
             this.game.background.imageSource = <string>$(this.LEMGeneralBgUrl).val();
             this.game.reset();
+            this.game.updateWindowTitle();
+            this.updateList();
         }
         private updateEditorMenuPlayer() {
             if (this.selectedObject instanceof Player) {
@@ -147,6 +242,7 @@ namespace CanvasGame {
                 this.game.player = this.selectedObject;
             }
             this.game.reset();
+            this.updateList();
         }
         private updateEditorMenuSprite() {
             if (this.selectedObject instanceof Sprite) {
@@ -164,6 +260,7 @@ namespace CanvasGame {
                 this.selectedObject.solid = $(this.LEMSpriteSolid).is(":checked");
             }
             this.game.reset();
+            this.updateList();
         }
         private updateEditorMenuStructure() {
             if (this.selectedObject instanceof Structure) {
@@ -185,6 +282,7 @@ namespace CanvasGame {
                 this.selectedObject.h = parseInt(<string>$(this.LEMStructureHeight).val());
             }
             this.game.reset();
+            this.updateList();
         }
         loop() {
             this.scrollScreen();
@@ -226,7 +324,7 @@ namespace CanvasGame {
                 }
             }
         }
-        selectObject(xRelative: number, yRelative: number) {
+        selectObjectByPos(xRelative: number, yRelative: number) {
             let previousSelectedObject = this.selectedObject;
             let x = this.game.scrollX + xRelative;
             let y = this.game.ctx.canvas.height - (this.game.scrollY + yRelative);
@@ -251,6 +349,44 @@ namespace CanvasGame {
                 this.selectedObject = null;
             }
             this.switchEditorMenu();
+        }
+        selectSprite(index: number) {
+            let previousSelectedObject = this.selectedObject;
+
+            this.selectedObject = this.game.sprites[index];
+
+            if (this.selectedObject == previousSelectedObject) {
+                this.selectedObject = null;
+            }
+            this.switchEditorMenu();
+        }
+        selectStructure(index: number) {
+            let previousSelectedObject = this.selectedObject;
+
+            this.selectedObject = this.game.structures[index];
+
+            if (this.selectedObject == previousSelectedObject) {
+                this.selectedObject = null;
+            }
+            this.switchEditorMenu();
+        }
+        selectPlayer() {
+            let previousSelectedObject = this.selectedObject;
+
+            this.selectedObject = this.game.player;
+
+            if (this.selectedObject == previousSelectedObject) {
+                this.selectedObject = null;
+            }
+            this.switchEditorMenu();
+        }
+        removeSprite(index: number) {
+            this.game.sprites = this.game.sprites.filter((v, i) => { return i != index });
+            this.updateList();
+        }
+        removeStructure(index: number) {
+            this.game.structures = this.game.structures.filter((v, i) => { return i != index });
+            this.updateList();
         }
     }
 }

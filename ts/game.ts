@@ -42,16 +42,7 @@ namespace CanvasGame {
             self = this;
             window.addEventListener('keypress', e => {
                 if (e.code == PauseKeyCode) {
-                    self.isPaused = !self.isPaused;
-                    self.updateWindowTitle();
-                    if (self.isPaused) {
-                        $(self.pauseIndicator).show();
-                        $(self.pauseIndicator).addClass("slide-in-blurred-left");
-                        $(self.pauseIndicator).removeClass("slide-out-blurred-right");
-                    } else {
-                        $(self.pauseIndicator).removeClass("slide-in-blurred-left");
-                        $(self.pauseIndicator).addClass("slide-out-blurred-right");
-                    }
+                    self.togglePause();
                 }
             });
             self = this;
@@ -103,6 +94,20 @@ namespace CanvasGame {
             this.loadLevel(level);
             this.lastUpdate = Date.now();
         }
+        togglePause() {
+            this.isPaused = !this.isPaused;
+            this.updateWindowTitle();
+            if (this.isPaused) {
+                $(this.pauseIndicator).show();
+                $(this.pauseIndicator).addClass("slide-in-blurred-left");
+                $(this.pauseIndicator).removeClass("slide-out-blurred-right");
+            }
+            else {
+                $(this.pauseIndicator).removeClass("slide-in-blurred-left");
+                $(this.pauseIndicator).addClass("slide-out-blurred-right");
+            }
+        }
+
         updateWindowTitle() {
             if (this.levelEditor.editorModeEnabled) {
                 if (!this.isPaused) {
@@ -121,7 +126,7 @@ namespace CanvasGame {
         loadLevel(level: Level) {
             this.level = level;
             this.updateWindowTitle();
-            this.levelEditor.selectObject(-1, -1);
+            this.levelEditor.selectObjectByPos(-1, -1);
             this.background = new Background(level.backgroundImageSource);
             this.structures = new Array<Structure>();
             this.sprites = new Array<Sprite>();
@@ -137,6 +142,7 @@ namespace CanvasGame {
             }
             this.player = new Player(level.playerImageSource, level.playerXInitial, level.playerYInitial);
             this.reset();
+            this.levelEditor.updateList();
         }
         changeLevel(levelPathURL: string) {
             Debug.log("Chaging level: ", levelPathURL);
@@ -152,7 +158,7 @@ namespace CanvasGame {
             for (let sprite of this.sprites) {
                 sprite.reset();
             }
-            for(let structure of this.structures) {
+            for (let structure of this.structures) {
                 structure.reset();
             }
             this.player.reset();
@@ -172,12 +178,12 @@ namespace CanvasGame {
             }
             this.ctx.fillStyle = "#000000";
             this.ctx.fillRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-            
+
             this.background.draw(this.ctx, this.scrollX, this.scrollY);
             this.drawStructures();
             this.drawSprites();
-            
-            if(this.levelEditor.editorModeEnabled) {
+
+            if (this.levelEditor.editorModeEnabled) {
                 this.levelEditor.loop();
             } else {
                 Debug.displayDebugInfo(this, delta);

@@ -14,8 +14,12 @@ block body
     div.col-md-2.col-sm-4
       div#level-editor-menu.card.unselectable(style='display:none;padding:15px')
         h4.card-title Level Editor Menu
-        div.card-subtitle
+        div.card-subtitle.btn-group
           button#editor-export.btn.btn-sm.btn-indigo Export level
+          button#editor-new-level.btn.btn-sm.btn-info New Level
+        div.card-body.btn-group
+          button#editor-new-sprite.btn.btn-sm.btn-info New sprite
+          button#editor-new-structure.btn.btn-sm.btn-info New structure
         hr
         div#editor-general
           +levelEditorHeader("Level settings", "general")
@@ -52,3 +56,11 @@ block body
         h5.card-text Levels
         ul.list-group.list-group-flush#level-selector
         button.card-text.btn.btn-indigo#level-editor-toggle(data-toggle="button", aria-pressed="false", autocomplete="off") Level Editor
+        div.card-body#editor-list
+          hr
+          h5 Level objects
+          h6#editor-list-player Player
+          h7 Sprites
+          ul.list-group.list-group-flush#editor-list-sprite
+          h7 Structures
+          ul.list-group.list-group-flush#editor-list-structure
