@@ -3,8 +3,6 @@ mixin levelEditorOption(label, id)
     label(for=id + '-input') #{label}
     div.input-group.input-group-sm
       input.form-control(type='text', id=id + '-input')
-      div.input-group-append
-        button.btn.btn-primary(id=id + '-set') Set
 
 mixin levelEditorOptionReadonly(label, id)
   div.card-body
@@ -18,8 +16,6 @@ mixin levelEditorOptionCoord(label, id)
     div.input-group.input-group-sm
       input.form-control(type='text', id=id + '-x-input', placeholder="X")
       input.form-control(type='text', id=id + '-y-input', placeholder="Y")
-      div.input-group-append
-        button.btn.btn-primary(id=id + '-set') Set
 
 mixin levelEditorOptionWidthHeight(label, id)
   div.card-body
@@ -27,12 +23,15 @@ mixin levelEditorOptionWidthHeight(label, id)
     div.input-group.input-group-sm
       input.form-control(type='text', id=id + '-w-input', placeholder="Width")
       input.form-control(type='text', id=id + '-h-input', placeholder="Height")
-      div.input-group-append
-        button.btn.btn-primary(id=id + '-set') Set
 
 mixin levelEditorOptionBool(label, id)
   div.card-body
     div.custom-control.custom-checkbox
       input.custom-control-input(type='checkbox', id=id + '-input')
       label.custom-control-label(for=id + '-input') #{label}
-      button.btn.btn-sm.btn-primary(id=id + '-set') Set
+
+mixin levelEditorHeader(label, id)
+  h5.card-subtitle #{label}
+  div.card-body.btn-group
+    button.btn.btn-sm.btn-primary(type='button', id='editor-' + id + '-set') Apply
+    button.btn.btn-sm.btn-primary(type='button', id='editor-' + id + '-reset') Reset

@@ -22,6 +22,13 @@ namespace CanvasGame {
             };
         }
         reset() {
+            this.imageReady = false;
+            this.image = document.createElement("img");
+            this.image.src = this.imageSource;
+            var self = this;
+            this.image.onload = (e) => {
+                self.imageReady = true;
+            };
             this.x = this.xInitial;
             this.y = this.yInitial;
         }
@@ -245,7 +252,9 @@ namespace CanvasGame {
     export class Background {
         image = document.createElement("img");
         imageReady = false;
+        imageSource: string;
         constructor(imageSource: string) {
+            this.imageSource = imageSource;
             if (imageSource != "") {
                 this.image.src = imageSource;
                 var self = this;
@@ -298,6 +307,15 @@ namespace CanvasGame {
             let c = <CanvasRenderingContext2D>document.createElement("canvas").getContext('2d');
             this.pattern = c.createPattern(this.image, "repeat");
         }
+        reset() {
+            this.imageReady = false;
+            this.image = document.createElement("img");
+            this.image.src = this.imageSource;
+            var self = this;
+            this.image.onload = (e) => {
+                self.imageLoaded(e)
+            };
+        }
         draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number) {
             if (this.imageReady && typeof this.pattern != "undefined") {
                 (<CanvasPattern>this.pattern).setTransform(this.matrix.translate(
@@ -314,5 +332,4 @@ namespace CanvasGame {
             }
         }
     }
-
 }

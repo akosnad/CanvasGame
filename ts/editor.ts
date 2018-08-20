@@ -3,58 +3,44 @@ namespace CanvasGame {
         editorModeEnabled = false;
         selectedObject: Sprite | Structure | Player | undefined | null;
         game: Game;
-        // Level Editor menu
-        private LEM: HTMLElement;
-        private LEMGeneral: HTMLElement;
-        private LEMGeneralLevelId: HTMLElement;
-        private LEMGeneralLevelName: HTMLElement;
-        private LEMGeneralBgUrl: HTMLElement;
 
-        private LEMSprite: HTMLElement;
-        private LEMSpriteImgUrl: HTMLElement;
-        private LEMSpriteInitialPosX: HTMLElement;
-        private LEMSpriteInitialPosY: HTMLElement;
-        private LEMSpriteSolid: HTMLElement;
+        // Level Editor menu elements
+        private LEM = <HTMLElement>document.getElementById("level-editor-menu");
 
-        private LEMStructure: HTMLElement;
-        private LEMStructureImgURL: HTMLElement;
-        private LEMStructureSolid: HTMLElement;
-        private LEMStructurePosX: HTMLElement;
-        private LEMStructurePosY: HTMLElement;
-        private LEMStructureWidth: HTMLElement;
-        private LEMStructureHeight: HTMLElement;
+        private LEMGeneral = <HTMLElement>document.getElementById("editor-general");
+        private LEMGeneralApply = <HTMLElement>document.getElementById("editor-general-set");
+        private LEMGeneralReset = <HTMLElement>document.getElementById("editor-general-reset");
+        private LEMGeneralLevelId = <HTMLElement>document.getElementById("level-id-input");
+        private LEMGeneralLevelName = <HTMLElement>document.getElementById("level-name-input");
+        private LEMGeneralBgUrl = <HTMLElement>document.getElementById("level-bg-input");
 
-        private LEMPlayer: HTMLElement;
-        private LEMPlayerImgURL: HTMLElement;
-        private LEMPlayerInitialPosX: HTMLElement;
-        private LEMPlayerInitialPosY: HTMLElement;
+        private LEMSprite = <HTMLElement>document.getElementById("editor-sprite");
+        private LEMSpriteApply = <HTMLElement>document.getElementById("editor-sprite-set");
+        private LEMSpriteReset = <HTMLElement>document.getElementById("editor-sprite-reset");
+        private LEMSpriteImgUrl = <HTMLElement>document.getElementById("sprite-img-input");
+        private LEMSpriteInitialPosX = <HTMLElement>document.getElementById("sprite-initial-x-input");
+        private LEMSpriteInitialPosY = <HTMLElement>document.getElementById("sprite-initial-y-input");
+        private LEMSpriteSolid = <HTMLElement>document.getElementById("sprite-solid-input");
+
+        private LEMStructure = <HTMLElement>document.getElementById("editor-structure");
+        private LEMStructureApply = <HTMLElement>document.getElementById("editor-structure-set");
+        private LEMStructureReset = <HTMLElement>document.getElementById("editor-structure-reset");
+        private LEMStructureImgURL = <HTMLElement>document.getElementById("structure-img-input");
+        private LEMStructureSolid = <HTMLElement>document.getElementById("structure-solid-input");
+        private LEMStructurePosX = <HTMLElement>document.getElementById("structure-pos-x-input");
+        private LEMStructurePosY = <HTMLElement>document.getElementById("structure-pos-y-input");
+        private LEMStructureWidth = <HTMLElement>document.getElementById("structure-wh-w-input");
+        private LEMStructureHeight = <HTMLElement>document.getElementById("structure-wh-h-input");
+
+        private LEMPlayer = <HTMLElement>document.getElementById("editor-player");
+        private LEMPlayerApply = <HTMLElement>document.getElementById("editor-player-set");
+        private LEMPlayerReset = <HTMLElement>document.getElementById("editor-player-reset");
+        private LEMPlayerImgURL = <HTMLElement>document.getElementById("player-img-input");
+        private LEMPlayerInitialPosX = <HTMLElement>document.getElementById("player-initial-x-input");
+        private LEMPlayerInitialPosY = <HTMLElement>document.getElementById("player-initial-y-input");
 
         constructor(game: Game) {
             this.game = game;
-            this.LEM = <HTMLElement>document.getElementById("level-editor-menu");
-            this.LEMGeneral = <HTMLElement>document.getElementById("level-editor-general");
-            this.LEMGeneralLevelId = <HTMLElement>document.getElementById("level-id-input");
-            this.LEMGeneralLevelName = <HTMLElement>document.getElementById("level-name-input");
-            this.LEMGeneralBgUrl = <HTMLElement>document.getElementById("level-bg-input");
-
-            this.LEMSprite = <HTMLElement>document.getElementById("level-editor-sprite");
-            this.LEMSpriteImgUrl = <HTMLElement>document.getElementById("sprite-img-input");
-            this.LEMSpriteInitialPosX = <HTMLElement>document.getElementById("sprite-initial-x-input");
-            this.LEMSpriteInitialPosY = <HTMLElement>document.getElementById("sprite-initial-y-input");
-            this.LEMSpriteSolid = <HTMLElement>document.getElementById("sprite-solid-input");
-
-            this.LEMStructure = <HTMLElement>document.getElementById("level-editor-structure");
-            this.LEMStructureImgURL = <HTMLElement>document.getElementById("structure-img-input");
-            this.LEMStructureSolid = <HTMLElement>document.getElementById("structure-solid-input");
-            this.LEMStructurePosX = <HTMLElement>document.getElementById("structure-pos-x-input");
-            this.LEMStructurePosY = <HTMLElement>document.getElementById("structure-pos-y-input");
-            this.LEMStructureWidth = <HTMLElement>document.getElementById("structure-wh-w-input");
-            this.LEMStructureHeight = <HTMLElement>document.getElementById("structure-wh-h-input");
-
-            this.LEMPlayer = <HTMLElement>document.getElementById("level-editor-player");
-            this.LEMPlayerImgURL = <HTMLElement>document.getElementById("player-img-input");
-            this.LEMPlayerInitialPosX = <HTMLElement>document.getElementById("player-initial-x-input");
-            this.LEMPlayerInitialPosY = <HTMLElement>document.getElementById("player-initial-y-input");
 
             this.switchEditorMenu();
 
@@ -62,14 +48,25 @@ namespace CanvasGame {
             this.game.ctx.canvas.addEventListener("click", (e) => {
                 self.selectObject(e.x, e.y);
             });
+
+            this.LEMGeneralApply.addEventListener("click", (e) => { self.applyEditorMenuGeneral(); });
+            this.LEMGeneralReset.addEventListener("click", (e) => { self.updateEditorMenuGeneral(); });
+            this.LEMPlayerApply.addEventListener("click", (e) => { self.applyEditorMenuPlayer(); });
+            this.LEMPlayerReset.addEventListener("click", (e) => { self.updateEditorMenuPlayer(); });
+            this.LEMSpriteApply.addEventListener("click", (e) => { self.applyEditorMenuSprite(); });
+            this.LEMSpriteReset.addEventListener("click", (e) => { self.updateEditorMenuSprite(); });
+            this.LEMStructureApply.addEventListener("click", (e) => { self.applyEditorMenuStructure(); });
+            this.LEMStructureReset.addEventListener("click", (e) => { self.updateEditorMenuStructure(); });
         }
         enableEditorMode() {
             this.editorModeEnabled = true;
             $(this.LEM).show();
+            this.game.reset();
         }
         disableEditorMode() {
             this.editorModeEnabled = false;
             $(this.LEM).hide();
+            this.game.reset();
         }
         private switchEditorMenu() {
             if (typeof this.selectedObject != "undefined" && this.selectedObject != null) {
@@ -109,12 +106,30 @@ namespace CanvasGame {
             $(this.LEMGeneralLevelName).val(this.game.level.name);
             $(this.LEMGeneralBgUrl).val(this.game.level.backgroundImageSource);
         }
+        private applyEditorMenuGeneral() {
+            this.game.level.name = <string>$(this.LEMGeneralLevelName).val();
+            this.game.level.backgroundImageSource = <string>$(this.LEMGeneralBgUrl).val();
+            this.game.background.imageSource = <string>$(this.LEMGeneralBgUrl).val();
+            this.game.reset();
+        }
         private updateEditorMenuPlayer() {
-            if(this.selectedObject instanceof Player) {
-            $(this.LEMPlayerImgURL).val(this.selectedObject.imageSource);
-            $(this.LEMPlayerInitialPosX).val(this.selectedObject.xInitial);
-            $(this.LEMPlayerInitialPosY).val(this.selectedObject.yInitial);
+            if (this.selectedObject instanceof Player) {
+                $(this.LEMPlayerImgURL).val(this.selectedObject.imageSource);
+                $(this.LEMPlayerInitialPosX).val(this.selectedObject.xInitial);
+                $(this.LEMPlayerInitialPosY).val(this.selectedObject.yInitial);
             }
+        }
+        private applyEditorMenuPlayer() {
+            if (this.selectedObject instanceof Player) {
+                this.selectedObject.imageSource = <string>$(this.LEMPlayerImgURL).val();
+                this.game.level.playerImageSource = <string>$(this.LEMPlayerImgURL).val();
+                this.selectedObject.xInitial = parseInt(<string>$(this.LEMPlayerInitialPosX).val());
+                this.game.level.playerXInitial = parseInt(<string>$(this.LEMPlayerInitialPosX).val());
+                this.selectedObject.yInitial = parseInt(<string>$(this.LEMPlayerInitialPosY).val());
+                this.game.level.playerYInitial = parseInt(<string>$(this.LEMPlayerInitialPosY).val());
+                this.game.player = this.selectedObject;
+            }
+            this.game.reset();
         }
         private updateEditorMenuSprite() {
             if (this.selectedObject instanceof Sprite) {
@@ -124,8 +139,17 @@ namespace CanvasGame {
                 $(this.LEMSpriteSolid).prop('checked', this.selectedObject.solid);
             }
         }
+        private applyEditorMenuSprite() {
+            if (this.selectedObject instanceof Sprite) {
+                this.selectedObject.imageSource = <string>$(this.LEMSpriteImgUrl).val();
+                this.selectedObject.xInitial = parseInt(<string>$(this.LEMSpriteInitialPosX).val());
+                this.selectedObject.yInitial = parseInt(<string>$(this.LEMSpriteInitialPosY).val());
+                this.selectedObject.solid = $(this.LEMSpriteSolid).is(":checked");
+            }
+            this.game.reset();
+        }
         private updateEditorMenuStructure() {
-            if(this.selectedObject instanceof Structure) {
+            if (this.selectedObject instanceof Structure) {
                 $(this.LEMStructureImgURL).val(this.selectedObject.imageSource);
                 $(this.LEMStructureSolid).prop('checked', this.selectedObject.solid);
                 $(this.LEMStructurePosX).val(this.selectedObject.x);
@@ -133,6 +157,17 @@ namespace CanvasGame {
                 $(this.LEMStructureWidth).val(this.selectedObject.w);
                 $(this.LEMStructureHeight).val(this.selectedObject.h);
             }
+        }
+        private applyEditorMenuStructure() {
+            if (this.selectedObject instanceof Structure) {
+                this.selectedObject.imageSource = <string>$(this.LEMStructureImgURL).val();
+                this.selectedObject.solid = $(this.LEMStructureSolid).is(":checked");
+                this.selectedObject.x = parseInt(<string>$(this.LEMStructurePosX).val());
+                this.selectedObject.y = parseInt(<string>$(this.LEMStructurePosY).val());
+                this.selectedObject.w = parseInt(<string>$(this.LEMStructureWidth).val());
+                this.selectedObject.h = parseInt(<string>$(this.LEMStructureHeight).val());
+            }
+            this.game.reset();
         }
         loop() {
             this.scrollScreen();

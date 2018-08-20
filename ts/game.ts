@@ -148,8 +148,12 @@ namespace CanvasGame {
             this.ctx.canvas.height = window.innerHeight;
         }
         reset() {
+            this.background = new Background(this.level.backgroundImageSource);
             for (let sprite of this.sprites) {
                 sprite.reset();
+            }
+            for(let structure of this.structures) {
+                structure.reset();
             }
             this.player.reset();
             this.scrollScreen();
