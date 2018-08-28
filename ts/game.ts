@@ -204,9 +204,11 @@ namespace CanvasGame {
                 sprite.draw(this.ctx, this.scrollX, this.scrollY);
             }
             // Draw other players
-            for (let player of otherPlayers) {
-                if (player.levelId == this.level.id) {
-                    player.draw(this.ctx, this.scrollX, this.scrollY);
+            if (!this.levelEditor.editorModeEnabled) {
+                for (let player of otherPlayers) {
+                    if (player.levelId == this.level.id) {
+                        player.draw(this.ctx, this.scrollX, this.scrollY);
+                    }
                 }
             }
             // Draw our player
