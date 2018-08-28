@@ -41,7 +41,6 @@ namespace CanvasGame {
         id = 0;
         playerXInitial = 0;
         playerYInitial = 0;
-        playerImageSource = "";
         backgroundImageSource = "";
         sourceFile = "";
         name = "";

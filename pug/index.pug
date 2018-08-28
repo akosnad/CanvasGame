@@ -42,7 +42,6 @@ block body
 
         div#editor-player
           +levelEditorHeader("Player", "player")
-          +levelEditorOption("Player image URL", "player-img")
           +levelEditorOptionCoord("Player spawn point", "player-initial")
 
 
@@ -53,6 +52,14 @@ block body
         h2.card-title Canvas Game
         h4.card-subtitle Paused
         hr
+        h5.card-text#editor-character-dropdown Character options
+          i.pull-right.fa.fa-angle-left#editor-character-dropdown-icon
+        div#editor-character
+          div.card-body.btn-group
+            button.btn.btn-sm.btn-success(type='button', id='editor-character-set') Apply
+            button.btn.btn-sm.btn-danger(type='button', id='editor-character-reset') Reset
+          +levelEditorOption("Player name", "player-name")
+          +levelEditorOption("Player image URL", "player-img")
         h5.card-text Levels
         ul.list-group.list-group-flush#level-selector
         button.card-text.btn.btn-indigo#level-editor-toggle(data-toggle="button", aria-pressed="false", autocomplete="off") Level Editor

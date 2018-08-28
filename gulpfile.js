@@ -3,7 +3,7 @@ var pug = require('gulp-pug');
 
 
 gulp.task('watch', function () {
-    gulp.watch('./pug/**', ['build-pug']);
+    gulp.watch('./pug/**', gulp.parallel(['build-pug']));
 })
 
 gulp.task('build-pug', function() {
@@ -31,8 +31,12 @@ gulp.task('copy-dist', function (done) {
     .pipe(gulp.dest('./wwwroot/lib/css'));
     gulp.src('./node_modules/mdbootstrap/css/mdb.min.css')
     .pipe(gulp.dest('./wwwroot/lib/css'));
+    gulp.src('./node_modules/font-awesome/css/font-awesome.min.css')
+    .pipe(gulp.dest('./wwwroot/lib/css'));
     gulp.src('./node_modules/mdbootstrap/font/roboto/*')
     .pipe(gulp.dest('./wwwroot/lib/font/roboto'));
+    gulp.src('./node_modules/font-awesome/fonts/*')
+    .pipe(gulp.dest('./wwwroot/lib/fonts/'));
     done();
 });
 

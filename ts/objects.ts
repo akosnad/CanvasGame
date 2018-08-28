@@ -22,6 +22,11 @@ namespace CanvasGame {
             };
         }
         reset() {
+            this.x = this.xInitial;
+            this.y = this.yInitial;
+        }
+        setImage(imageSource: string) {
+            this.imageSource = imageSource;
             this.imageReady = false;
             this.image = document.createElement("img");
             this.image.src = this.imageSource;
@@ -29,8 +34,6 @@ namespace CanvasGame {
             this.image.onload = (e) => {
                 self.imageReady = true;
             };
-            this.x = this.xInitial;
-            this.y = this.yInitial;
         }
         tick(timeDelta: number, otherSprites: Array<Sprite>, structures: Array<Structure>) { }
         draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number) {
@@ -210,6 +213,7 @@ namespace CanvasGame {
     }
 
     export class Player extends LivingSprite {
+        name = "";
         constructor(imageSource: string, xInitial: number, yInitial: number) {
             super(imageSource, xInitial, yInitial);
             var self = this;
@@ -223,16 +227,14 @@ namespace CanvasGame {
     }
 
     export class OtherPlayer extends Sprite {
-        playerId: number;
-        levelId: number;
-        lastUpdateTimestamp: number;
+        playerId = 0;
+        levelId = 0;
+        lastUpdateTimestamp = Date.now();
         solid = false;
         isPaused = false;
-        constructor(imageSource: string, playerData: MultiPlayerData) {
-            super(imageSource, 0, 0);
-            this.playerId = playerData.playerId;
-            this.levelId = playerData.levelId;
-            this.lastUpdateTimestamp = playerData.lastUpdateTimestamp;
+        name = "";
+        constructor() {
+            super("", 0, 0);
         }
         draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number) {
             if (this.imageReady) {

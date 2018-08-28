@@ -24,7 +24,7 @@ namespace CanvasGame {
         mouseY = 0;
         private lastUpdate: number;
         isPaused = false;
-        multi = new Multiplayer();
+        multi = new Multiplayer(this);
         private canvas: HTMLCanvasElement;
         ctx: CanvasRenderingContext2D;
         private pauseIndicator: HTMLElement;
@@ -90,7 +90,7 @@ namespace CanvasGame {
             });
 
             this.background = new Background(level.backgroundImageSource);
-            this.player = new Player(level.playerImageSource, level.playerXInitial, level.playerYInitial);
+            this.player = new Player(this.levelEditor.getPlayerImgSrc(), level.playerXInitial, level.playerYInitial);
             this.loadLevel(level);
             this.lastUpdate = Date.now();
         }
@@ -140,7 +140,7 @@ namespace CanvasGame {
                 structure.solid = levelStructure.solid;
                 this.structures.push(structure);
             }
-            this.player = new Player(level.playerImageSource, level.playerXInitial, level.playerYInitial);
+            this.player = new Player(this.levelEditor.getPlayerImgSrc(), level.playerXInitial, level.playerYInitial);
             this.reset();
             this.levelEditor.updateList();
         }
@@ -189,7 +189,7 @@ namespace CanvasGame {
                 Debug.displayDebugInfo(this, delta);
             }
 
-            this.multi.sendPlayerData(this.player, this.level, this.isPaused);
+            this.multi.sendPlayerPositionData(this.player, this.level, this.isPaused);
 
             if (this.isPaused) {
                 this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";

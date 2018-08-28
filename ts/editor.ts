@@ -4,6 +4,15 @@ namespace CanvasGame {
         selectedObject: Sprite | Structure | Player | undefined | null;
         game: Game;
 
+        private CharacterEditorMenu = <HTMLElement>document.getElementById("editor-character");
+        private CharacterEditorDropdown = <HTMLElement>document.getElementById("editor-character-dropdown");
+        private CharacterEditorDropdownIcon = <HTMLElement>document.getElementById("editor-character-dropdown-icon");
+
+        private CharacterEditorApply = <HTMLElement>document.getElementById("editor-character-set");
+        private CharacterEditorReset = <HTMLElement>document.getElementById("editor-character-reset");
+        private CharacterEditorName = <HTMLElement>document.getElementById("player-name-input");
+        private CharacterEditorImgUrl = <HTMLElement>document.getElementById("player-img-input");
+
         // Level Editor menu elements
         private LEM = <HTMLElement>document.getElementById("level-editor-menu");
 
@@ -45,18 +54,24 @@ namespace CanvasGame {
         private LEMPlayer = <HTMLElement>document.getElementById("editor-player");
         private LEMPlayerApply = <HTMLElement>document.getElementById("editor-player-set");
         private LEMPlayerReset = <HTMLElement>document.getElementById("editor-player-reset");
-        private LEMPlayerImgURL = <HTMLElement>document.getElementById("player-img-input");
         private LEMPlayerInitialPosX = <HTMLElement>document.getElementById("player-initial-x-input");
         private LEMPlayerInitialPosY = <HTMLElement>document.getElementById("player-initial-y-input");
 
         constructor(game: Game) {
             this.game = game;
+            var self = this;
 
             $(this.LEMList).hide();
 
+            $(this.CharacterEditorMenu).hide();
+            this.CharacterEditorDropdown.style.cursor = "pointer";
+            this.CharacterEditorDropdown.addEventListener("click", () => { self.toggleCharacterEditorMenu(); });
+            this.CharacterEditorApply.addEventListener("click", () => { self.applyCharacterEditor(); });
+            this.CharacterEditorReset.addEventListener("click", () => { self.updateCharacterEditor(); });
+            this.updateCharacterEditor();
+
             this.switchEditorMenu();
 
-            var self = this;
             this.game.ctx.canvas.addEventListener("click", (e) => {
                 self.selectObjectByPos(e.x, e.y);
             });
@@ -92,10 +107,14 @@ namespace CanvasGame {
             $(this.LEMList).hide();
             this.game.reset();
         }
+        private toggleCharacterEditorMenu() {
+            $(this.CharacterEditorMenu).toggle();
+            $(this.CharacterEditorDropdownIcon).toggleClass("fa-angle-left");
+            $(this.CharacterEditorDropdownIcon).toggleClass("fa-angle-down");
+        }
         private newLevel() {
             let level = new Level();
             level.id = Date.now();
-            level.playerImageSource = "/img/hero.png";
             this.game.loadLevel(level);
             this.selectedObject = null;
             this.switchEditorMenu();
@@ -211,6 +230,41 @@ namespace CanvasGame {
                 this.updateEditorMenuGeneral();
             }
         }
+        getPlayerImgSrc() {
+            let result = localStorage.getItem("playerImg");
+            if (typeof result == "string" && result != "") {
+                return result;
+            } else { return "/img/hero.png"; }
+        }
+        private applyCharacterEditor() {
+            let playerName = $(this.CharacterEditorName).val();
+            let playerImg = $(this.CharacterEditorImgUrl).val();
+
+            if (typeof playerName == "string") {
+                localStorage.setItem("playerName", playerName);
+                this.game.player.name = playerName;
+            }
+            if (typeof playerImg == "string") {
+                localStorage.setItem("playerImg", playerImg);
+                this.game.player.setImage(this.getPlayerImgSrc());
+            }
+            this.game.multi.sendPlayerDescription();
+        }
+        private updateCharacterEditor() {
+            let playerName = localStorage.getItem("playerName");
+            let playerImg = localStorage.getItem("playerImg");
+
+            if (playerName == null) {
+                $(this.CharacterEditorName).val("");
+            } else {
+                $(this.CharacterEditorName).val(playerName);
+            }
+            if (playerImg == null) {
+                $(this.CharacterEditorImgUrl).val("");
+            } else {
+                $(this.CharacterEditorImgUrl).val(playerImg);
+            }
+        }
         private updateEditorMenuGeneral() {
             $(this.LEMGeneralLevelId).val(this.game.level.id);
             $(this.LEMGeneralLevelName).val(this.game.level.name);
@@ -226,15 +280,12 @@ namespace CanvasGame {
         }
         private updateEditorMenuPlayer() {
             if (this.selectedObject instanceof Player) {
-                $(this.LEMPlayerImgURL).val(this.selectedObject.imageSource);
                 $(this.LEMPlayerInitialPosX).val(this.selectedObject.xInitial);
                 $(this.LEMPlayerInitialPosY).val(this.selectedObject.yInitial);
             }
         }
         private applyEditorMenuPlayer() {
             if (this.selectedObject instanceof Player) {
-                this.selectedObject.imageSource = <string>$(this.LEMPlayerImgURL).val();
-                this.game.level.playerImageSource = <string>$(this.LEMPlayerImgURL).val();
                 this.selectedObject.xInitial = parseInt(<string>$(this.LEMPlayerInitialPosX).val());
                 this.game.level.playerXInitial = parseInt(<string>$(this.LEMPlayerInitialPosX).val());
                 this.selectedObject.yInitial = parseInt(<string>$(this.LEMPlayerInitialPosY).val());
