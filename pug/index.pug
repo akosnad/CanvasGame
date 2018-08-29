@@ -59,7 +59,7 @@ block body
             button.btn.btn-sm.btn-success(type='button', id='editor-character-set') Apply
             button.btn.btn-sm.btn-danger(type='button', id='editor-character-reset') Reset
           +levelEditorOption("Player name", "player-name")
-          +levelEditorOption("Player image URL", "player-img")
+          +levelEditorOptionPlaceholder("Player image URL", "player-img", "Using default image")
         h5.card-text Levels
         ul.list-group.list-group-flush#level-selector
         button.card-text.btn.btn-indigo#level-editor-toggle(data-toggle="button", aria-pressed="false", autocomplete="off") Level Editor
