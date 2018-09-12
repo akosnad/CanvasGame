@@ -37,10 +37,12 @@ namespace CanvasGame {
 
     export class Level {
         sprites = new Array<LevelSprite>();
+        livingSprites = new Array<LevelLivingSprite>();
         structures = new Array<LevelStructure>();
         id = 0;
         playerXInitial = 0;
         playerYInitial = 0;
+        playerLogicFunction = "";
         backgroundImageSource = "";
         sourceFile = "";
         name = "";
@@ -56,6 +58,24 @@ namespace CanvasGame {
             this.yInitial = sprite.yInitial;
             this.solid = sprite.solid;
             this.imageSource = sprite.imageSource;
+        }
+    }
+
+    export class LevelLivingSprite extends LevelSprite{
+        xVelocityMax: number;
+        xVelocityIncrease: number;
+        xVelocityDecrease: number;
+        gravity: number;
+        jumpStrenght: number;
+        logicFunction: string;
+        constructor(livingSprite: LivingSprite) {
+            super(new Sprite(livingSprite.imageSource, livingSprite.xInitial, livingSprite.yInitial));
+            this.xVelocityMax = livingSprite.xVelocityMax;
+            this.xVelocityIncrease = livingSprite.xVelocityIncrease;
+            this.xVelocityDecrease = livingSprite.xVelocityDecrease;
+            this.gravity = livingSprite.gravity;
+            this.jumpStrenght = livingSprite.jumpStrenght;
+            this.logicFunction = "(" + livingSprite.logic.toString() + ")";
         }
     }
 

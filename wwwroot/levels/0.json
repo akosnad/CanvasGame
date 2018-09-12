@@ -1,10 +1,12 @@
 {
     "sprites": [],
+    "livingSprites": [],
     "structures": [],
     "id": 0,
     "playerXInitial": 0,
     "playerYInitial": 0,
     "playerImageSource": "/img/hero.png",
+    "playerLogicFunction": "(function() {})",
     "backgroundImageSource": "/img/bg.jpg",
     "name": "Main"
 }

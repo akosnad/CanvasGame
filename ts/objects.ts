@@ -58,15 +58,19 @@ namespace CanvasGame {
         jumpStrenght = 500;
         solid = false;
         isStanding = false;
+        public logic() {} // Custom AI behavoiur
+        constructor(imageSource: string, xInitial: number, yInitial: number, logic: () => any) {
+            super(imageSource, xInitial, yInitial);
+            this.logic = logic;
+        }
         tick(timeDelta: number, otherSprites: Array<Sprite>, structures: Array<Structure>) {
+            this.logic();
+
             this.handleMovement();
-
             this.handleVelocity(timeDelta);
-
             this.handleStructureCollisions(structures);
-
             this.handleSpriteCollisions(otherSprites);
-
+            
             if (this.x < 0) {
                 this.x = 0;
                 this.xVelocity = 0;
@@ -214,8 +218,8 @@ namespace CanvasGame {
 
     export class Player extends LivingSprite {
         name = "";
-        constructor(imageSource: string, xInitial: number, yInitial: number) {
-            super(imageSource, xInitial, yInitial);
+        constructor(imageSource: string, xInitial: number, yInitial: number, logic: () => any) {
+            super(imageSource, xInitial, yInitial, logic);
             var self = this;
             window.addEventListener('keydown', (e) => {
                 self.movingDirections[e.keyCode] = 1;

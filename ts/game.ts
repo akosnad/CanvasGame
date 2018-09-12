@@ -90,7 +90,7 @@ namespace CanvasGame {
             });
 
             this.background = new Background(level.backgroundImageSource);
-            this.player = new Player(this.levelEditor.getPlayerImgSrc(), level.playerXInitial, level.playerYInitial);
+            this.player = new Player(this.levelEditor.getPlayerImgSrc(), level.playerXInitial, level.playerYInitial, eval(level.playerLogicFunction));
             this.loadLevel(level);
             this.lastUpdate = Date.now();
         }
@@ -135,12 +135,31 @@ namespace CanvasGame {
                 sprite.solid = levelSprite.solid;
                 this.sprites.push(sprite);
             }
+            for (let levelLivingSprite of level.livingSprites) {
+                let logicFunction = eval(levelLivingSprite.logicFunction);
+                if(typeof logicFunction != "function") {
+                    CanvasGame.Debug.log("Couldn't load sprite logic function, got: ", levelLivingSprite.logicFunction);
+                    logicFunction = () => {};
+                }
+                let livingSprite = new LivingSprite(levelLivingSprite.imageSource, levelLivingSprite.xInitial, levelLivingSprite.yInitial, logicFunction);
+                livingSprite.solid = levelLivingSprite.solid;
+                livingSprite.xVelocityIncrease = levelLivingSprite.xVelocityIncrease;
+                livingSprite.xVelocityDecrease = levelLivingSprite.xVelocityDecrease;
+                livingSprite.gravity = levelLivingSprite.gravity;
+                livingSprite.jumpStrenght = levelLivingSprite.jumpStrenght;
+                this.sprites.push(livingSprite);
+            }
             for (let levelStructure of level.structures) {
                 let structure = new Structure(levelStructure.imageSource, levelStructure.x, levelStructure.y, levelStructure.w, levelStructure.h);
                 structure.solid = levelStructure.solid;
                 this.structures.push(structure);
             }
-            this.player = new Player(this.levelEditor.getPlayerImgSrc(), level.playerXInitial, level.playerYInitial);
+            let playerLogicFunction = eval(level.playerLogicFunction);
+            if(typeof playerLogicFunction != "function") {
+                CanvasGame.Debug.log("Couldn't load player logic function, got: ", level.playerLogicFunction);
+                playerLogicFunction = () => {};
+            }
+            this.player = new Player(this.levelEditor.getPlayerImgSrc(), level.playerXInitial, level.playerYInitial, playerLogicFunction);
             this.reset();
             this.levelEditor.updateList();
         }
@@ -187,9 +206,9 @@ namespace CanvasGame {
                 this.levelEditor.loop();
             } else {
                 Debug.displayDebugInfo(this, delta);
+                this.multi.sendPlayerPositionData(this.player, this.level, this.isPaused);
             }
 
-            this.multi.sendPlayerPositionData(this.player, this.level, this.isPaused);
 
             if (this.isPaused) {
                 this.ctx.fillStyle = "rgba(0, 0, 0, 0.5)";

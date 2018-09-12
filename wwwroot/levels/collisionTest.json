@@ -5,12 +5,20 @@
             "yInitial": 48,
             "solid": false,
             "imageSource": "/img/monster.png"
-        },
+        }
+    ],
+    "livingSprites": [
         {
             "xInitial": 700,
             "yInitial": 0,
             "solid": true,
-            "imageSource": "/img/monster.png"
+            "xVelocityMax": 255,
+            "xVelocityIncrease": 30,
+            "xVelocityDecrease": 15,
+            "gravity": 15,
+            "jumpStrenght": 500,
+            "imageSource": "/img/monster.png",
+            "logicFunction": "(function() { this.movingDirections[37] = 1; })"
         }
     ],
     "structures": [
@@ -34,6 +42,7 @@
     "id": 123456,
     "playerXInitial": 1200,
     "playerYInitial": 0,
+    "playerLogicFunction": "(function() {})",
     "playerImageSource": "/img/hero.png",
     "backgroundImageSource": "",
     "name": "Testing"
