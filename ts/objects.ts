@@ -35,7 +35,7 @@ namespace CanvasGame {
                 self.imageReady = true;
             };
         }
-        tick(timeDelta: number, otherSprites: Array<Sprite>, structures: Array<Structure>) { }
+        tick(timeDelta: number, otherSprites: Array<Sprite>, structures: Array<Structure>, player: Player) { }
         draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number) {
             if (this.imageReady) {
                 ctx.drawImage(
@@ -58,18 +58,19 @@ namespace CanvasGame {
         jumpStrenght = 500;
         solid = false;
         isStanding = false;
-        public logic() {} // Custom AI behavoiur
-        constructor(imageSource: string, xInitial: number, yInitial: number, logic: () => any) {
+        public logic(otherSprites: Array<Sprite>, structures: Array<Structure>, player: Player) {} // Custom AI behavoiur
+        constructor(imageSource: string, xInitial: number, yInitial: number, logic: (otherSprites: Array<Sprite>, structures: Array<Structure>, player: Player) => any) {
             super(imageSource, xInitial, yInitial);
             this.logic = logic;
         }
-        tick(timeDelta: number, otherSprites: Array<Sprite>, structures: Array<Structure>) {
-            this.logic();
+        tick(timeDelta: number, otherSprites: Array<Sprite>, structures: Array<Structure>, player: Player) {
+            this.logic(otherSprites, structures, player);
 
             this.handleMovement();
             this.handleVelocity(timeDelta);
             this.handleStructureCollisions(structures);
             this.handleSpriteCollisions(otherSprites);
+            this.handlePlayerCollision(player);
             
             if (this.x < 0) {
                 this.x = 0;
@@ -185,6 +186,30 @@ namespace CanvasGame {
             }
         }
 
+        private handlePlayerCollision(player: Player) {
+            if(!(this instanceof Player)) {
+                if(this.collides(player, player.image.width, player.image.height)) {
+                    if (this.collisionFromTop(player, player.image.height)) {
+                        this.y = player.y + player.image.height;
+                        this.yVelocity = 0;
+                        this.isStanding = true;
+                    }
+                    else if (this.collisionFromLeft(player)) {
+                        this.x = player.x - this.image.width;
+                        this.xVelocity = 0;
+                    }
+                    else if (this.collisionFromRight(player, player.image.width)) {
+                        this.x = player.x + player.image.width;
+                        this.xVelocity = 0;
+                    }
+                    else if (this.collisionFromBottom(player)) {
+                        this.y = player.y - this.image.height;
+                        this.yVelocity = 0;
+                    }
+                }
+            }
+        }
+
         private collisionFromBottom(object: Sprite | Structure) {
             return this.yVelocity > 0 && this.y + this.image.height <= object.y + 10;
         }
@@ -218,7 +243,7 @@ namespace CanvasGame {
 
     export class Player extends LivingSprite {
         name = "";
-        constructor(imageSource: string, xInitial: number, yInitial: number, logic: () => any) {
+        constructor(imageSource: string, xInitial: number, yInitial: number, logic: (otherSprites: Array<Sprite>, structures: Array<Structure>) => any) {
             super(imageSource, xInitial, yInitial, logic);
             var self = this;
             window.addEventListener('keydown', (e) => {

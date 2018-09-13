@@ -12,13 +12,13 @@
             "xInitial": 700,
             "yInitial": 0,
             "solid": true,
-            "xVelocityMax": 255,
-            "xVelocityIncrease": 30,
-            "xVelocityDecrease": 15,
+            "xVelocityMax": 125,
+            "xVelocityIncrease": 15,
+            "xVelocityDecrease": 5,
             "gravity": 15,
-            "jumpStrenght": 500,
+            "jumpStrenght": 300,
             "imageSource": "/img/monster.png",
-            "logicFunction": "(function() { this.movingDirections[37] = 1; })"
+            "logicFunction": "( function(otherSprites, structures, player) { this.movingDirections = []; if(this.x + this.image.width < player.x) { this.movingDirections[39] = 1; } else if(player.x + player.image.width < this.x) { this.movingDirections[37] = 1; } } )"
         }
     ],
     "structures": [

@@ -139,12 +139,13 @@ namespace CanvasGame {
                 let logicFunction = eval(levelLivingSprite.logicFunction);
                 if(typeof logicFunction != "function") {
                     CanvasGame.Debug.log("Couldn't load sprite logic function, got: ", levelLivingSprite.logicFunction);
-                    logicFunction = () => {};
+                    logicFunction = (otherSprites: Array<Sprite>, structures: Array<Structure>, player: Player) => {};
                 }
                 let livingSprite = new LivingSprite(levelLivingSprite.imageSource, levelLivingSprite.xInitial, levelLivingSprite.yInitial, logicFunction);
                 livingSprite.solid = levelLivingSprite.solid;
                 livingSprite.xVelocityIncrease = levelLivingSprite.xVelocityIncrease;
                 livingSprite.xVelocityDecrease = levelLivingSprite.xVelocityDecrease;
+                livingSprite.xVelocityMax = levelLivingSprite.xVelocityMax;
                 livingSprite.gravity = levelLivingSprite.gravity;
                 livingSprite.jumpStrenght = levelLivingSprite.jumpStrenght;
                 this.sprites.push(livingSprite);
@@ -157,7 +158,7 @@ namespace CanvasGame {
             let playerLogicFunction = eval(level.playerLogicFunction);
             if(typeof playerLogicFunction != "function") {
                 CanvasGame.Debug.log("Couldn't load player logic function, got: ", level.playerLogicFunction);
-                playerLogicFunction = () => {};
+                playerLogicFunction = (otherSprites: Array<Sprite>, structures: Array<Structure>) => {};
             }
             this.player = new Player(this.levelEditor.getPlayerImgSrc(), level.playerXInitial, level.playerYInitial, playerLogicFunction);
             this.reset();
@@ -264,9 +265,9 @@ namespace CanvasGame {
         private tickSprites(delta: number) {
             var self = this;
             for (let sprite of this.sprites) {
-                sprite.tick(delta, self.sprites, self.structures);
+                sprite.tick(delta, self.sprites, self.structures, this.player);
             }
-            this.player.tick(delta, this.sprites, self.structures);
+            this.player.tick(delta, this.sprites, self.structures, this.player);
         }
 
         addSprite(sprite: Sprite) {
