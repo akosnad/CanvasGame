@@ -68,9 +68,7 @@ namespace CanvasGame {
 
             this.handleMovement();
             this.handleVelocity(timeDelta);
-            this.handleStructureCollisions(structures);
-            this.handleSpriteCollisions(otherSprites);
-            this.handlePlayerCollision(player);
+            this.handleCollisions(structures, otherSprites, player);
             
             if (this.x < 0) {
                 this.x = 0;
@@ -124,6 +122,13 @@ namespace CanvasGame {
             }
         }
 
+        private handleCollisions(structures: Structure[], otherSprites: Sprite[], player: Player) {
+            this.isStanding = false;
+            this.handleStructureCollisions(structures);
+            this.handleSpriteCollisions(otherSprites);
+            this.handlePlayerCollision(player);
+    }
+
         private handleStructureCollisions(structures: Array<Structure>) {
             let solidStructures = Array<Structure>();
             for (let structure of structures) {
@@ -131,7 +136,6 @@ namespace CanvasGame {
                     solidStructures.push(structure);
                 }
             }
-            this.isStanding = false;
             for (let structure of solidStructures) {
                 if (this.collides(structure, structure.w, structure.h)) {
                     if (this.collisionFromTop(structure, structure.h)) {
@@ -162,7 +166,6 @@ namespace CanvasGame {
                     solidSprites.push(sprite);
                 }
             }
-            this.isStanding = false;
             for (let sprite of solidSprites) {
                 if (this.collides(sprite, sprite.image.width, sprite.image.height)) {
                     if (this.collisionFromTop(sprite, sprite.image.height)) {

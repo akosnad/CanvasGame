@@ -18,7 +18,7 @@
             "gravity": 15,
             "jumpStrenght": 300,
             "imageSource": "/img/monster.png",
-            "logicFunction": "( function(otherSprites, structures, player) { this.movingDirections = []; if(this.x + this.image.width < player.x) { this.movingDirections[39] = 1; } else if(player.x + player.image.width < this.x) { this.movingDirections[37] = 1; } } )"
+            "logicFunction": "( function(otherSprites, structures, player) { this.movingDirections = []; if(this.x + this.image.width < player.x) { this.movingDirections[39] = 1; } else if(player.x + player.image.width < this.x) { this.movingDirections[37] = 1; } if(this.y + this.image.height < player.y) { this.movingDirections[38] = 1; } } )"
         }
     ],
     "structures": [
