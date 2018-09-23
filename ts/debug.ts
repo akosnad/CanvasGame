@@ -1,6 +1,12 @@
 namespace CanvasGame {
     export class Debug {
         public static debugInfoEnabled = false;
+        private static em = 12;
+        private static colW = 1;
+        static calcEm(w: number, h: number) {
+            this.em = w / 2 / 80
+            this.colW = w / 10;
+        }
         static displayDebugInfo(game: Game, delta: number) {
             if (this.debugInfoEnabled) {
                 Debug.drawDebugText(game, delta * 1000);
@@ -21,73 +27,75 @@ namespace CanvasGame {
             }
         }
         private static drawDebugText(game: Game, timeDelta: number) {
+            let font = `${this.em}px Roboto`;
+
             game.ctx.fillStyle = "#FFFFFF";
-            game.ctx.font = "12px Roboto";
-            game.ctx.fillText("Canvas Game", game.ctx.canvas.width - 88, game.ctx.canvas.height - 24);
-            game.ctx.fillText("Made by Ákos Nádudvari", game.ctx.canvas.width - 150, game.ctx.canvas.height - 12);
+            game.ctx.font = font;
+            game.ctx.fillText("Canvas Game", this.colW * 9, game.ctx.canvas.height - (2 * this.em));
+            game.ctx.fillText("Made by Ákos Nádudvari", this.colW * 9, game.ctx.canvas.height - this.em);
 
-            game.ctx.fillText("x", 0, 24);
-            game.ctx.fillText("y", 0, 36);
+            game.ctx.fillText("x", 0, this.em * 2);
+            game.ctx.fillText("y", 0, this.em * 3);
 
-            game.ctx.fillText("absolute pos", 20, 12);
-            game.ctx.fillText(game.player.x.toString(), 20, 24);
-            game.ctx.fillText(game.player.y.toString(), 20, 36);
-            game.ctx.fillText("scroll", 220, 12);
-            game.ctx.fillText(game.scrollX.toString(), 220, 24);
-            game.ctx.fillText(game.scrollY.toString(), 220, 36);
-            game.ctx.fillText("relative pos", 420, 12);
-            game.ctx.fillText((game.player.x - scrollX).toString(), 420, 24);
-            game.ctx.fillText((game.player.y - scrollY).toString(), 420, 36);
-            game.ctx.fillText("velocity", 620, 12);
-            game.ctx.fillText(game.player.xVelocity.toString(), 620, 24);
-            game.ctx.fillText(game.player.yVelocity.toString(), 620, 36);
-            game.ctx.fillText("screen", 820, 12);
-            game.ctx.fillText(game.ctx.canvas.width.toString(), 820, 24);
-            game.ctx.fillText(game.ctx.canvas.height.toString(), 820, 36);
-            game.ctx.fillText("frametime", 920, 12);
-            game.ctx.fillText(timeDelta.toString(), 920, 24);
+            game.ctx.fillText("absolute pos", this.em, this.em);
+            game.ctx.fillText(game.player.x.toString(), this.em, this.em * 2);
+            game.ctx.fillText(game.player.y.toString(), this.em, this.em * 3);
+            game.ctx.fillText("scroll", this.colW, this.em);
+            game.ctx.fillText(game.scrollX.toString(), this.colW, this.em * 2);
+            game.ctx.fillText(game.scrollY.toString(), this.colW, this.em * 3);
+            game.ctx.fillText("relative pos", this.colW * 2, this.em);
+            game.ctx.fillText((game.player.x - game.scrollX).toString(), this.colW * 2, this.em * 2);
+            game.ctx.fillText((game.player.y - game.scrollY).toString(), this.colW * 2, this.em * 3);
+            game.ctx.fillText("velocity", this.colW * 3, this.em);
+            game.ctx.fillText(game.player.xVelocity.toString(), this.colW * 3, this.em * 2);
+            game.ctx.fillText(game.player.yVelocity.toString(), this.colW * 3, this.em * 3);
+            game.ctx.fillText("screen", this.colW * 4, this.em);
+            game.ctx.fillText(game.ctx.canvas.width.toString(), this.colW * 4, this.em * 2);
+            game.ctx.fillText(game.ctx.canvas.height.toString(), this.colW * 4, this.em * 3);
+            game.ctx.fillText("frametime", this.colW * 5, this.em);
+            game.ctx.fillText(timeDelta.toString(), this.colW * 5, this.em * 2);
 
             game.ctx.fillStyle = "rgb(255, 0, 0)";
-            game.ctx.fillRect(0, 52, 12, 12);
+            game.ctx.fillRect(0, this.em * 5, this.em, this.em);
             game.ctx.fillStyle = "#FFFFFF";
-            game.ctx.font = "12px Roboto";
-            game.ctx.fillText(": Player sprite's hitbox", 16, 62);
+            game.ctx.font = font;
+            game.ctx.fillText(": Player sprite's hitbox", this.em + this.em * 0.33, this.em * 6);
 
             game.ctx.fillStyle = "rgb(0, 255, 0)";
-            game.ctx.fillRect(0, 76, 12, 12);
+            game.ctx.fillRect(0, this.em * 6, this.em, this.em);
             game.ctx.fillStyle = "#FFFFFF";
-            game.ctx.font = "12px Roboto";
-            game.ctx.fillText(": Game sprites' hitbox", 16, 86);
+            game.ctx.font = font;
+            game.ctx.fillText(": Game sprites' hitbox", this.em + this.em * 0.33, this.em * 7);
 
             game.ctx.fillStyle = "rgb(0, 0, 255)";
-            game.ctx.fillRect(0, 100, 12, 12);
+            game.ctx.fillRect(0, this.em * 7, this.em, this.em);
             game.ctx.fillStyle = "#FFFFFF";
-            game.ctx.font = "12px Roboto";
-            game.ctx.fillText(": Other players' hitbox", 16, 110);
+            game.ctx.font = font;
+            game.ctx.fillText(": Other players' hitbox", this.em + this.em * 0.33, this.em * 8);
 
             game.ctx.fillStyle = "rgb(255, 255, 0)";
-            game.ctx.fillRect(0, 124, 12, 12);
+            game.ctx.fillRect(0, this.em * 8, this.em, this.em);
             game.ctx.fillStyle = "#FFFFFF";
-            game.ctx.font = "12px Roboto";
-            game.ctx.fillText(": Structures' hitbox", 16, 134);
+            game.ctx.font = font;
+            game.ctx.fillText(": Structures' hitbox", this.em + this.em * 0.33, this.em * 9);
 
-            game.ctx.fillText("level", 220, 62);
-            game.ctx.fillText(game.level.name, 220, 74);
+            game.ctx.fillText("level", this.colW, this.em * 5);
+            game.ctx.fillText(game.level.name, this.colW, this.em * 6);
 
-            game.ctx.fillText("level source", 420, 62);
-            game.ctx.fillText(game.level.sourceFile, 420, 74);
+            game.ctx.fillText("level source", this.colW * 2, this.em * 5);
+            game.ctx.fillText(game.level.sourceFile, this.colW * 2, this.em * 6);
 
-            game.ctx.fillText("level id", 620, 62);
-            game.ctx.fillText(game.level.id.toString(), 620, 74);
+            game.ctx.fillText("level id", this.colW * 3, this.em * 5);
+            game.ctx.fillText(game.level.id.toString(), this.colW * 3, this.em * 6);
 
-            game.ctx.fillText("sprites", 220, 122);
-            game.ctx.fillText(game.sprites.length.toString(), 220, 134);
+            game.ctx.fillText("sprites", this.colW, this.em * 8);
+            game.ctx.fillText(game.sprites.length.toString(), this.colW, this.em * 9);
 
-            game.ctx.fillText("structures", 420, 122);
-            game.ctx.fillText(game.structures.length.toString(), 420, 134);
+            game.ctx.fillText("structures", this.colW * 2, this.em * 8);
+            game.ctx.fillText(game.structures.length.toString(), this.colW * 2, this.em * 9);
 
-            game.ctx.fillText("other players", 620, 122);
-            game.ctx.fillText(otherPlayers.length.toString(), 620, 134);
+            game.ctx.fillText("other players", this.colW * 3, this.em * 8);
+            game.ctx.fillText(otherPlayers.length.toString(), this.colW * 3, this.em * 9);
         }
         private static drawStructureHitbox(ctx: CanvasRenderingContext2D, structure: Structure, color: string, offsetX: number, offsetY: number) {
             ctx.fillStyle = color;

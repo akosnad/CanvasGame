@@ -172,6 +172,7 @@ namespace CanvasGame {
             this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
             this.ctx.canvas.width = window.innerWidth;
             this.ctx.canvas.height = window.innerHeight;
+            Debug.calcEm(this.ctx.canvas.width, this.ctx.canvas.height);
         }
         reset() {
             this.background = new Background(this.level.backgroundImageSource);
