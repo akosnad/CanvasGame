@@ -38,6 +38,22 @@
             "problemMatcher": [
                 "$tsc-watch"
             ]
+        },
+        {
+            "label": "Run firefox Debugging server",
+            "type": "process",
+            "command": "C:\\Program Files\\Firefox Developer Edition\\firefox.exe",
+            "args": [
+                "-start-debugger-server"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true
+            },
+            "problemMatcher": []
         }
     ]
 }
