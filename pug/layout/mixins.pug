@@ -36,6 +36,11 @@ mixin levelEditorOptionBool(label, id)
       input.custom-control-input(type='checkbox', id=id + '-input')
       label.custom-control-label(for=id + '-input') #{label}
 
+mixin levelEditorOptionTextarea(label, id)
+  div.card-body
+    label(for=id + '-input') #{label}
+    textarea.md-textarea.md-textarea-auto.form-control(type='text', id=id + '-input', rows='2')
+
 mixin levelEditorHeader(label, id)
   h5.card-subtitle #{label}
   div.card-body.btn-group

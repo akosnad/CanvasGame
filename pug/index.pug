@@ -19,6 +19,7 @@ block body
           button#editor-new-level.btn.btn-sm.btn-info New Level
         div.card-body.btn-group
           button#editor-new-sprite.btn.btn-sm.btn-info New sprite
+          button#editor-new-living-sprite.btn.btn-sm.btn-info New living sprite
           button#editor-new-structure.btn.btn-sm.btn-info New structure
         hr
         div#editor-general
@@ -32,6 +33,13 @@ block body
           +levelEditorOption("Sprite image URL", "sprite-img")
           +levelEditorOptionBool("Solid", "sprite-solid")
           +levelEditorOptionCoord("Sprite spawn point", "sprite-initial")
+        
+        div#editor-living-sprite
+          +levelEditorHeader("Living sprite", "living-sprite")
+          +levelEditorOption("Sprite image URL", "living-sprite-img")
+          +levelEditorOptionBool("Solid", "living-sprite-solid")
+          +levelEditorOptionCoord("Sprite spawn point", "living-sprite-initial")
+          +levelEditorOptionTextarea("Sprite logic (JS)", "living-sprite-logic")
 
         div#editor-structure
           +levelEditorHeader("Structure", "structure")
@@ -43,6 +51,7 @@ block body
         div#editor-player
           +levelEditorHeader("Player", "player")
           +levelEditorOptionCoord("Player spawn point", "player-initial")
+          +levelEditorOptionTextarea("Player logic (JS)", "player-logic")
 
 
     div.col-md-8.col-sm-4

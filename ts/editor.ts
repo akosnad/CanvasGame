@@ -18,6 +18,7 @@ namespace CanvasGame {
 
         private LEMNewLevel = <HTMLElement>document.getElementById("editor-new-level");
         private LEMNewSprite = <HTMLElement>document.getElementById("editor-new-sprite");
+        private LEMNewLivingSprite = <HTMLElement>document.getElementById("editor-new-living-sprite");
         private LEMNewStructure = <HTMLElement>document.getElementById("editor-new-structure");
         private LEMExport = <HTMLElement>document.getElementById("editor-export");
 
@@ -41,6 +42,15 @@ namespace CanvasGame {
         private LEMSpriteInitialPosY = <HTMLElement>document.getElementById("sprite-initial-y-input");
         private LEMSpriteSolid = <HTMLElement>document.getElementById("sprite-solid-input");
 
+        private LEMLivingSprite = <HTMLElement>document.getElementById("editor-living-sprite");
+        private LEMLivingSpriteApply = <HTMLElement>document.getElementById("editor-living-sprite-set");
+        private LEMLivingSpriteReset = <HTMLElement>document.getElementById("editor-living-sprite-reset");
+        private LEMLivingSpriteImgUrl = <HTMLElement>document.getElementById("living-sprite-img-input");
+        private LEMLivingSpriteInitialPosX = <HTMLElement>document.getElementById("living-sprite-initial-x-input");
+        private LEMLivingSpriteInitialPosY = <HTMLElement>document.getElementById("living-sprite-initial-y-input");
+        private LEMLivingSpriteSolid = <HTMLElement>document.getElementById("living-sprite-solid-input");
+        private LEMLivingSpriteLogic = <HTMLElement>document.getElementById("living-sprite-logic-input");
+
         private LEMStructure = <HTMLElement>document.getElementById("editor-structure");
         private LEMStructureApply = <HTMLElement>document.getElementById("editor-structure-set");
         private LEMStructureReset = <HTMLElement>document.getElementById("editor-structure-reset");
@@ -56,6 +66,7 @@ namespace CanvasGame {
         private LEMPlayerReset = <HTMLElement>document.getElementById("editor-player-reset");
         private LEMPlayerInitialPosX = <HTMLElement>document.getElementById("player-initial-x-input");
         private LEMPlayerInitialPosY = <HTMLElement>document.getElementById("player-initial-y-input");
+        private LEMPlayerLogic = <HTMLElement>document.getElementById("player-logic-input");
 
         constructor(game: Game) {
             this.game = game;
@@ -78,6 +89,7 @@ namespace CanvasGame {
 
             this.LEMNewLevel.addEventListener("click", () => { self.newLevel(); });
             this.LEMNewSprite.addEventListener("click", () => { self.newSprite(); });
+            this.LEMNewLivingSprite.addEventListener("click", () => { self.newLivingSprite(); });
             this.LEMNewStructure.addEventListener("click", () => { self.newStructure(); });
             this.LEMExport.addEventListener("click", () => { self.exportLevel(); });
 
@@ -87,6 +99,8 @@ namespace CanvasGame {
             this.LEMPlayerReset.addEventListener("click", () => { self.updateEditorMenuPlayer(); });
             this.LEMSpriteApply.addEventListener("click", () => { self.applyEditorMenuSprite(); });
             this.LEMSpriteReset.addEventListener("click", () => { self.updateEditorMenuSprite(); });
+            this.LEMLivingSpriteApply.addEventListener("click", () => { self.applyEditorMenuLivingSprite(); });
+            this.LEMLivingSpriteReset.addEventListener("click", () => { self.updateEditorMenuLivingSprite(); });
             this.LEMStructureApply.addEventListener("click", () => { self.applyEditorMenuStructure(); });
             this.LEMStructureReset.addEventListener("click", () => { self.updateEditorMenuStructure(); });
 
@@ -134,6 +148,11 @@ namespace CanvasGame {
         }
         private newSprite() {
             this.selectedObject = new Sprite("/img/monster.png", 0, 0);
+            this.game.sprites.push(this.selectedObject);
+            this.switchEditorMenu();
+        }
+        private newLivingSprite() {
+            this.selectedObject = new LivingSprite("/img/monster.png", 0, 0, () => { });
             this.game.sprites.push(this.selectedObject);
             this.switchEditorMenu();
         }
@@ -202,13 +221,23 @@ namespace CanvasGame {
                 if (this.selectedObject instanceof Player) {
                     $(this.LEMGeneral).hide();
                     $(this.LEMSprite).hide();
+                    $(this.LEMLivingSprite).hide();
                     $(this.LEMStructure).hide();
                     $(this.LEMPlayer).show();
 
                     this.updateEditorMenuPlayer();
+                } else if (this.selectedObject instanceof LivingSprite) {
+                    $(this.LEMGeneral).hide();
+                    $(this.LEMSprite).hide();
+                    $(this.LEMLivingSprite).show();
+                    $(this.LEMStructure).hide();
+                    $(this.LEMPlayer).hide();
+
+                    this.updateEditorMenuLivingSprite();
                 } else if (this.selectedObject instanceof Sprite) {
                     $(this.LEMGeneral).hide();
                     $(this.LEMSprite).show();
+                    $(this.LEMLivingSprite).hide();
                     $(this.LEMStructure).hide();
                     $(this.LEMPlayer).hide();
 
@@ -216,6 +245,7 @@ namespace CanvasGame {
                 } else if (this.selectedObject instanceof Structure) {
                     $(this.LEMGeneral).hide();
                     $(this.LEMSprite).hide();
+                    $(this.LEMLivingSprite).hide();
                     $(this.LEMStructure).show();
                     $(this.LEMPlayer).hide();
 
@@ -224,6 +254,7 @@ namespace CanvasGame {
             } else {
                 $(this.LEMGeneral).show();
                 $(this.LEMSprite).hide();
+                $(this.LEMLivingSprite).hide();
                 $(this.LEMStructure).hide();
                 $(this.LEMPlayer).hide();
 
@@ -282,6 +313,7 @@ namespace CanvasGame {
             if (this.selectedObject instanceof Player) {
                 $(this.LEMPlayerInitialPosX).val(this.selectedObject.xInitial);
                 $(this.LEMPlayerInitialPosY).val(this.selectedObject.yInitial);
+                $(this.LEMPlayerLogic).val(this.selectedObject.logic.toString());
             }
         }
         private applyEditorMenuPlayer() {
@@ -290,6 +322,14 @@ namespace CanvasGame {
                 this.game.level.playerXInitial = parseInt(<string>$(this.LEMPlayerInitialPosX).val());
                 this.selectedObject.yInitial = parseInt(<string>$(this.LEMPlayerInitialPosY).val());
                 this.game.level.playerYInitial = parseInt(<string>$(this.LEMPlayerInitialPosY).val());
+
+                let logicFunction = eval(`( ${<string>$(this.LEMPlayerLogic).val()} )`);
+                if (typeof logicFunction != "function") {
+                    CanvasGame.Debug.log("Couldn't load player logic function, got: ", $(this.LEMPlayerLogic).val());
+                    logicFunction = (otherSprites: Array<Sprite>, structures: Array<Structure>) => { };
+                }
+                this.selectedObject.logic = logicFunction;
+
                 this.game.player = this.selectedObject;
             }
             this.game.reset();
@@ -309,12 +349,44 @@ namespace CanvasGame {
                 $(this.LEMSpriteInitialPosY).val(this.selectedObject.yInitial);
             }
         }
+        private updateEditorMenuLivingSprite() {
+            if (this.selectedObject instanceof LivingSprite) {
+                $(this.LEMLivingSpriteImgUrl).val(this.selectedObject.imageSource);
+                $(this.LEMLivingSpriteInitialPosX).val(this.selectedObject.xInitial);
+                $(this.LEMLivingSpriteInitialPosY).val(this.selectedObject.yInitial);
+                $(this.LEMLivingSpriteSolid).prop('checked', this.selectedObject.solid);
+                $(this.LEMLivingSpriteLogic).val(this.selectedObject.logic.toString());
+            }
+        }
+        private updateEditorMenuLivingSpritePos() {
+            if (this.selectedObject instanceof LivingSprite) {
+                $(this.LEMLivingSpriteInitialPosX).val(this.selectedObject.xInitial);
+                $(this.LEMLivingSpriteInitialPosY).val(this.selectedObject.yInitial);
+            }
+        }
         private applyEditorMenuSprite() {
             if (this.selectedObject instanceof Sprite) {
                 this.selectedObject.imageSource = <string>$(this.LEMSpriteImgUrl).val();
                 this.selectedObject.xInitial = parseInt(<string>$(this.LEMSpriteInitialPosX).val());
                 this.selectedObject.yInitial = parseInt(<string>$(this.LEMSpriteInitialPosY).val());
                 this.selectedObject.solid = $(this.LEMSpriteSolid).is(":checked");
+            }
+            this.game.reset();
+            this.updateList();
+        }
+        private applyEditorMenuLivingSprite() {
+            if (this.selectedObject instanceof LivingSprite) {
+                this.selectedObject.imageSource = <string>$(this.LEMLivingSpriteImgUrl).val();
+                this.selectedObject.xInitial = parseInt(<string>$(this.LEMLivingSpriteInitialPosX).val());
+                this.selectedObject.yInitial = parseInt(<string>$(this.LEMLivingSpriteInitialPosY).val());
+                this.selectedObject.solid = $(this.LEMLivingSpriteSolid).is(":checked");
+                
+                let logicFunction = eval(`( ${<string>$(this.LEMLivingSpriteLogic).val()} )`);
+                if (typeof logicFunction != "function") {
+                    CanvasGame.Debug.log("Couldn't load sprite logic function, got: ", $(this.LEMLivingSpriteLogic).val());
+                    logicFunction = (otherSprites: Array<Sprite>, structures: Array<Structure>) => { };
+                }
+                this.selectedObject.logic = logicFunction;
             }
             this.game.reset();
             this.updateList();
@@ -402,13 +474,19 @@ namespace CanvasGame {
                             this.updateEditorMenuStructurePos();
                         }
                     } else if (this.selectedObject instanceof Player) {
-                        if(this._moveObject(moveAmount)) {
+                        if (this._moveObject(moveAmount)) {
                             this.selectedObject.xInitial = this.selectedObject.x;
                             this.selectedObject.yInitial = this.selectedObject.y;
                             this.updateEditorMenuPlayer();
                         }
+                    } else if (this.selectedObject instanceof LivingSprite) {
+                        if (this._moveObject(moveAmount)) {
+                            this.selectedObject.xInitial = this.selectedObject.x;
+                            this.selectedObject.yInitial = this.selectedObject.y;
+                            this.updateEditorMenuLivingSpritePos()
+                        }
                     } else if (this.selectedObject instanceof Sprite) {
-                        if(this._moveObject(moveAmount)) {
+                        if (this._moveObject(moveAmount)) {
                             this.selectedObject.xInitial = this.selectedObject.x;
                             this.selectedObject.yInitial = this.selectedObject.y;
                             this.updateEditorMenuSpritePos()
