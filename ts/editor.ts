@@ -303,6 +303,12 @@ namespace CanvasGame {
                 $(this.LEMSpriteSolid).prop('checked', this.selectedObject.solid);
             }
         }
+        private updateEditorMenuSpritePos() {
+            if (this.selectedObject instanceof Sprite) {
+                $(this.LEMSpriteInitialPosX).val(this.selectedObject.xInitial);
+                $(this.LEMSpriteInitialPosY).val(this.selectedObject.yInitial);
+            }
+        }
         private applyEditorMenuSprite() {
             if (this.selectedObject instanceof Sprite) {
                 this.selectedObject.imageSource = <string>$(this.LEMSpriteImgUrl).val();
@@ -323,6 +329,12 @@ namespace CanvasGame {
                 $(this.LEMStructureHeight).val(this.selectedObject.h);
             }
         }
+        private updateEditorMenuStructurePos() {
+            if (this.selectedObject instanceof Structure) {
+                $(this.LEMStructurePosX).val(this.selectedObject.x);
+                $(this.LEMStructurePosY).val(this.selectedObject.y);
+            }
+        }
         private applyEditorMenuStructure() {
             if (this.selectedObject instanceof Structure) {
                 this.selectedObject.imageSource = <string>$(this.LEMStructureImgURL).val();
@@ -336,8 +348,9 @@ namespace CanvasGame {
             this.updateList();
         }
         loop() {
-            this.scrollScreen();
             if (typeof this.selectedObject != "undefined" && this.selectedObject != null) {
+                this.moveObject();
+                this.game.scrollScreen();
                 let w = 0;
                 let h = 0;
                 if (this.selectedObject instanceof Sprite) {
@@ -352,6 +365,8 @@ namespace CanvasGame {
                     this.selectedObject.x - this.game.scrollX,
                     this.game.ctx.canvas.height - this.selectedObject.y - h + this.game.scrollY,
                     w, h);
+            } else {
+                this.scrollScreen();
             }
         }
         private scrollScreen() {
@@ -374,6 +389,46 @@ namespace CanvasGame {
                     this.game.scrollY = 0;
                 }
             }
+        }
+        private moveObject() {
+            if (this.editorModeEnabled) {
+                if (typeof this.selectedObject != "undefined" && this.selectedObject != null) {
+                    let moveAmount = 10;
+                    if (MovingDirections.modifier in this.game.player.movingDirections) {
+                        moveAmount = 1;
+                    }
+                    if (this.selectedObject instanceof Structure) {
+                        if (this._moveObject(moveAmount)) {
+                            this.updateEditorMenuStructurePos();
+                        }
+                    } else if (this.selectedObject instanceof Player) {
+                        if(this._moveObject(moveAmount)) {
+                            this.selectedObject.xInitial = this.selectedObject.x;
+                            this.selectedObject.yInitial = this.selectedObject.y;
+                            this.updateEditorMenuPlayer();
+                        }
+                    } else if (this.selectedObject instanceof Sprite) {
+                        if(this._moveObject(moveAmount)) {
+                            this.selectedObject.xInitial = this.selectedObject.x;
+                            this.selectedObject.yInitial = this.selectedObject.y;
+                            this.updateEditorMenuSpritePos()
+                        }
+                    }
+                }
+            }
+        }
+        private _moveObject(moveAmount: number) {
+            let changed = false;
+            if (typeof this.selectedObject != "undefined" && this.selectedObject != null) {
+                if (MovingDirections.down in this.game.player.movingDirections) { this.selectedObject.y -= moveAmount; changed = true; }
+                if (MovingDirections.up in this.game.player.movingDirections) { this.selectedObject.y += moveAmount; changed = true; }
+                if (MovingDirections.left in this.game.player.movingDirections) { this.selectedObject.x -= moveAmount; changed = true; }
+                if (MovingDirections.right in this.game.player.movingDirections) { this.selectedObject.x += moveAmount; changed = true; }
+
+                if (this.selectedObject.x < 0) { this.selectedObject.x = 0; }
+                if (this.selectedObject.y < 0) { this.selectedObject.y = 0; }
+            }
+            return changed;
         }
         selectObjectByPos(xRelative: number, yRelative: number) {
             let previousSelectedObject = this.selectedObject;

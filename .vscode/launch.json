@@ -45,7 +45,9 @@
         {
             "name": "Debug Firefox",
             "type": "firefox",
-            "request": "attach",
+            "request": "launch",
+            "reAttach": true,
+            "profile": "dev-edition-default",
             "url": "http://localhost:5000",
             "pathMappings": [
                 {

@@ -9,6 +9,7 @@ namespace CanvasGame {
         right = 39,
         up = 38,
         down = 40,
+        modifier = 16
     }
 
     export class Game {
@@ -242,7 +243,7 @@ namespace CanvasGame {
             }
         }
 
-        private scrollScreen() {
+        scrollScreen() {
             if (this.player.x - this.scrollX > this.ctx.canvas.width * 0.8) {
                 this.scrollX += this.player.x - this.scrollX - (this.ctx.canvas.width * 0.8);
             }
