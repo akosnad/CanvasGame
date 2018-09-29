@@ -112,12 +112,17 @@ namespace CanvasGame {
         enableEditorMode() {
             this.editorModeEnabled = true;
             $(this.LEM).show();
+            $(this.LEM).removeClass("slide-out-blurred-right");
+            $(this.LEM).addClass("slide-in-blurred-left");
             $(this.LEMList).show();
             this.game.reset();
         }
         disableEditorMode() {
             this.editorModeEnabled = false;
-            $(this.LEM).hide();
+            $(this.LEM).removeClass("slide-in-blurred-left");
+            $(this.LEM).addClass("slide-out-blurred-right");
+            var self = this;
+            setTimeout(() => { $(self.LEM).hide(); }, 500);
             $(this.LEMList).hide();
             this.game.reset();
         }

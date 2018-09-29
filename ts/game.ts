@@ -12,6 +12,41 @@ namespace CanvasGame {
         modifier = 16
     }
 
+    class OnScreenControls {
+        pause = <HTMLElement>document.getElementById("control-pause");
+        resume = <HTMLElement>document.getElementById("control-resume");
+        container = <HTMLElement>document.getElementById("controls");
+        left = <HTMLElement>document.getElementById("control-left");
+        right = <HTMLElement>document.getElementById("control-right");
+        up = <HTMLElement>document.getElementById("control-up");
+        down = <HTMLElement>document.getElementById("control-down");
+        enabled = false;
+        constructor(game: Game) {
+            this.pause.addEventListener("click", () => { game.togglePause(); });
+            this.pause.style.cursor = "pointer";
+            this.resume.addEventListener("click", () => { game.togglePause(); });
+            this.resume.style.cursor = "pointer";
+
+            this.left.addEventListener("mousedown", () => { game.player.movingDirections[MovingDirections.left] = 1; });
+            this.right.addEventListener("mousedown", () => { game.player.movingDirections[MovingDirections.right] = 1; });
+            this.up.addEventListener("mousedown", () => { game.player.movingDirections[MovingDirections.up] = 1; });
+            this.down.addEventListener("mousedown", () => { game.player.movingDirections[MovingDirections.down] = 1; });
+
+            this.left.addEventListener("mouseup", () => { delete game.player.movingDirections[MovingDirections.left]; });
+            this.right.addEventListener("mouseup", () => { delete game.player.movingDirections[MovingDirections.right]; });
+            this.up.addEventListener("mouseup", () => { delete game.player.movingDirections[MovingDirections.up]; });
+            this.down.addEventListener("mouseup", () => { delete game.player.movingDirections[MovingDirections.down]; });
+        }
+        enable() {
+            $(this.container).show();
+            $(this.pause).show();
+        }
+        disable() {
+            $(this.container).hide();
+            $(this.pause).hide();
+        }
+    }
+
     export class Game {
         level: Level = new Level();
         levelList: LevelList;
@@ -25,6 +60,7 @@ namespace CanvasGame {
         mouseY = 0;
         private lastUpdate: number;
         isPaused = false;
+        onScreenControls = new OnScreenControls(this);
         multi = new Multiplayer(this);
         private canvas: HTMLCanvasElement;
         ctx: CanvasRenderingContext2D;
@@ -37,6 +73,7 @@ namespace CanvasGame {
             document.title = this.title;
             this.canvas = <HTMLCanvasElement>document.getElementById("game-canvas");
             this.ctx = <CanvasRenderingContext2D>this.canvas.getContext("2d");
+            this.levelEditorToggle = <HTMLElement>document.getElementById("level-editor-toggle");
             var self = this;
             window.addEventListener('resize', () => self.resizeCanvas(), false);
             this.resizeCanvas();
@@ -80,7 +117,6 @@ namespace CanvasGame {
             this.levelEditor = new LevelEditor(this);
 
             self = this;
-            this.levelEditorToggle = <HTMLElement>document.getElementById("level-editor-toggle");
             this.levelEditorToggle.addEventListener("click", (e) => {
                 if (self.levelEditor.editorModeEnabled) {
                     self.levelEditor.disableEditorMode();
@@ -106,6 +142,8 @@ namespace CanvasGame {
             else {
                 $(this.pauseIndicator).removeClass("slide-in-blurred-left");
                 $(this.pauseIndicator).addClass("slide-out-blurred-right");
+                var self = this;
+                setTimeout(() => { $(self.pauseIndicator).hide(); }, 500)
             }
         }
 
@@ -138,9 +176,9 @@ namespace CanvasGame {
             }
             for (let levelLivingSprite of level.livingSprites) {
                 let logicFunction = eval(levelLivingSprite.logicFunction);
-                if(typeof logicFunction != "function") {
+                if (typeof logicFunction != "function") {
                     CanvasGame.Debug.log("Couldn't load sprite logic function, got: ", levelLivingSprite.logicFunction);
-                    logicFunction = (otherSprites: Array<Sprite>, structures: Array<Structure>, player: Player) => {};
+                    logicFunction = (otherSprites: Array<Sprite>, structures: Array<Structure>, player: Player) => { };
                 }
                 let livingSprite = new LivingSprite(levelLivingSprite.imageSource, levelLivingSprite.xInitial, levelLivingSprite.yInitial, logicFunction);
                 livingSprite.solid = levelLivingSprite.solid;
@@ -157,9 +195,9 @@ namespace CanvasGame {
                 this.structures.push(structure);
             }
             let playerLogicFunction = eval(level.playerLogicFunction);
-            if(typeof playerLogicFunction != "function") {
+            if (typeof playerLogicFunction != "function") {
                 CanvasGame.Debug.log("Couldn't load player logic function, got: ", level.playerLogicFunction);
-                playerLogicFunction = (otherSprites: Array<Sprite>, structures: Array<Structure>) => {};
+                playerLogicFunction = (otherSprites: Array<Sprite>, structures: Array<Structure>) => { };
             }
             this.player = new Player(this.levelEditor.getPlayerImgSrc(), level.playerXInitial, level.playerYInitial, playerLogicFunction);
             this.reset();
@@ -174,6 +212,13 @@ namespace CanvasGame {
             this.ctx.canvas.width = window.innerWidth;
             this.ctx.canvas.height = window.innerHeight;
             Debug.calcEm(this.ctx.canvas.width, this.ctx.canvas.height);
+            if (window.innerWidth < 768) {
+                this.onScreenControls.enable();
+                $(this.levelEditorToggle).hide();
+            } else {
+                this.onScreenControls.disable();
+                $(this.levelEditorToggle).show();
+            }
         }
         reset() {
             this.background = new Background(this.level.backgroundImageSource);
@@ -195,7 +240,7 @@ namespace CanvasGame {
             let delta = now - this.lastUpdate;
             delta = delta / 1000;
             if (!this.isPaused && !this.levelEditor.editorModeEnabled) {
-                this.tickSprites(delta);
+                this.tickObjects(delta);
                 this.scrollScreen();
             }
             this.ctx.fillStyle = "#000000";
@@ -264,7 +309,7 @@ namespace CanvasGame {
             }
         }
 
-        private tickSprites(delta: number) {
+        private tickObjects(delta: number) {
             var self = this;
             for (let sprite of this.sprites) {
                 sprite.tick(delta, self.sprites, self.structures, this.player);

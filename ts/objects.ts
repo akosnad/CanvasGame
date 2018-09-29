@@ -58,7 +58,7 @@ namespace CanvasGame {
         jumpStrenght = 500;
         solid = false;
         isStanding = false;
-        public logic(otherSprites: Array<Sprite>, structures: Array<Structure>, player: Player) {} // Custom AI behavoiur
+        public logic(otherSprites: Array<Sprite>, structures: Array<Structure>, player: Player) { } // Custom AI behavoiur
         constructor(imageSource: string, xInitial: number, yInitial: number, logic: (otherSprites: Array<Sprite>, structures: Array<Structure>, player: Player) => any) {
             super(imageSource, xInitial, yInitial);
             this.logic = logic;
@@ -69,7 +69,7 @@ namespace CanvasGame {
             this.handleMovement();
             this.handleVelocity(timeDelta);
             this.handleCollisions(structures, otherSprites, player);
-            
+
             if (this.x < 0) {
                 this.x = 0;
                 this.xVelocity = 0;
@@ -106,7 +106,7 @@ namespace CanvasGame {
             if (MovingDirections.left in this.movingDirections) {
                 this.xVelocity -= this.xVelocityIncrease;
             }
-            else if (MovingDirections.right in this.movingDirections) {
+            if (MovingDirections.right in this.movingDirections) {
                 this.xVelocity += this.xVelocityIncrease;
             }
             // Not pressing anything
@@ -127,7 +127,7 @@ namespace CanvasGame {
             this.handleStructureCollisions(structures);
             this.handleSpriteCollisions(otherSprites);
             this.handlePlayerCollision(player);
-    }
+        }
 
         private handleStructureCollisions(structures: Array<Structure>) {
             let solidStructures = Array<Structure>();
@@ -190,8 +190,8 @@ namespace CanvasGame {
         }
 
         private handlePlayerCollision(player: Player) {
-            if(!(this instanceof Player)) {
-                if(this.collides(player, player.image.width, player.image.height)) {
+            if (!(this instanceof Player)) {
+                if (this.collides(player, player.image.width, player.image.height)) {
                     if (this.collisionFromTop(player, player.image.height)) {
                         this.y = player.y + player.image.height;
                         this.yVelocity = 0;

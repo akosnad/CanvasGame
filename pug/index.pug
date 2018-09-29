@@ -10,14 +10,25 @@ append style
 block body
   canvas#game-canvas
   svg#matrix-provider(style='display:none')
+  div.control-pause
+    i.fa.fa-pause#control-pause
+  div.controls#controls
+    div.row
+      div.col-4
+        i.fa.fa-caret-left#control-left
+      div.col-4
+        i.fa.fa-caret-up#control-up
+        i.fa.fa-caret-down#control-down
+      div.col-4
+        i.fa.fa-caret-right#control-right
   div.row
-    div.col-md-2.col-sm-4
+    div.col-lg-2.col-md-4
       div#level-editor-menu.card.unselectable(style='display:none;padding:15px')
         h4.card-title Level Editor Menu
-        div.card-subtitle.btn-group
+        div.card-subtitle
           button#editor-export.btn.btn-sm.btn-indigo Export level
           button#editor-new-level.btn.btn-sm.btn-info New Level
-        div.card-body.btn-group
+        div.card-body
           button#editor-new-sprite.btn.btn-sm.btn-info New sprite
           button#editor-new-living-sprite.btn.btn-sm.btn-info New living sprite
           button#editor-new-structure.btn.btn-sm.btn-info New structure
@@ -54,12 +65,15 @@ block body
           +levelEditorOptionTextarea("Player logic (JS)", "player-logic")
 
 
-    div.col-md-8.col-sm-4
+    div.col
 
-    div.col-md-2.col-sm-4
+    div.col-lg-2.col-md-4
       div#pause-indicator.card.unselectable(style="padding:15px")
         h2.card-title Canvas Game
-        h4.card-subtitle Paused
+        div.card-subtitle
+            h4
+              | Paused 
+              i.fa.fa-play#control-resume
         hr
         h5.card-text#editor-character-dropdown Character options
           i.pull-right.fa.fa-angle-left#editor-character-dropdown-icon
