@@ -385,7 +385,7 @@ namespace CanvasGame {
                 this.selectedObject.xInitial = parseInt(<string>$(this.LEMLivingSpriteInitialPosX).val());
                 this.selectedObject.yInitial = parseInt(<string>$(this.LEMLivingSpriteInitialPosY).val());
                 this.selectedObject.solid = $(this.LEMLivingSpriteSolid).is(":checked");
-                
+
                 let logicFunction = eval(`( ${<string>$(this.LEMLivingSpriteLogic).val()} )`);
                 if (typeof logicFunction != "function") {
                     CanvasGame.Debug.log("Couldn't load sprite logic function, got: ", $(this.LEMLivingSpriteLogic).val());
@@ -475,26 +475,40 @@ namespace CanvasGame {
                         moveAmount = 1;
                     }
                     if (this.selectedObject instanceof Structure) {
-                        if (this._moveObject(moveAmount)) {
-                            this.updateEditorMenuStructurePos();
+                        if (!$(this.LEMStructurePosX).is(":focus")
+                            && !$(this.LEMStructurePosY).is(":focus")) {
+                            if (this._moveObject(moveAmount)) {
+                                this.updateEditorMenuStructurePos();
+                            }
                         }
                     } else if (this.selectedObject instanceof Player) {
-                        if (this._moveObject(moveAmount)) {
-                            this.selectedObject.xInitial = this.selectedObject.x;
-                            this.selectedObject.yInitial = this.selectedObject.y;
-                            this.updateEditorMenuPlayer();
+                        if (!$(this.LEMPlayerLogic).is(":focus")
+                            && !$(this.LEMPlayerInitialPosX).is(":focus")
+                            && !$(this.LEMPlayerInitialPosY).is(":focus")) {
+                            if (this._moveObject(moveAmount)) {
+                                this.selectedObject.xInitial = this.selectedObject.x;
+                                this.selectedObject.yInitial = this.selectedObject.y;
+                                this.updateEditorMenuPlayer();
+                            }
                         }
                     } else if (this.selectedObject instanceof LivingSprite) {
-                        if (this._moveObject(moveAmount)) {
-                            this.selectedObject.xInitial = this.selectedObject.x;
-                            this.selectedObject.yInitial = this.selectedObject.y;
-                            this.updateEditorMenuLivingSpritePos()
+                        if (!$(this.LEMLivingSpriteLogic).is(":focus")
+                            && !$(this.LEMLivingSpriteInitialPosX).is(":focus")
+                            && !$(this.LEMLivingSpriteInitialPosY).is(":focus")) {
+                            if (this._moveObject(moveAmount)) {
+                                this.selectedObject.xInitial = this.selectedObject.x;
+                                this.selectedObject.yInitial = this.selectedObject.y;
+                                this.updateEditorMenuLivingSpritePos()
+                            }
                         }
                     } else if (this.selectedObject instanceof Sprite) {
-                        if (this._moveObject(moveAmount)) {
-                            this.selectedObject.xInitial = this.selectedObject.x;
-                            this.selectedObject.yInitial = this.selectedObject.y;
-                            this.updateEditorMenuSpritePos()
+                        if (!$(this.LEMSpriteInitialPosX).is(":focus")
+                            && !$(this.LEMSpriteInitialPosY).is(":focus")) {
+                            if (this._moveObject(moveAmount)) {
+                                this.selectedObject.xInitial = this.selectedObject.x;
+                                this.selectedObject.yInitial = this.selectedObject.y;
+                                this.updateEditorMenuSpritePos()
+                            }
                         }
                     }
                 }

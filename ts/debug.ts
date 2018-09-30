@@ -4,8 +4,8 @@ namespace CanvasGame {
         private static em = 12;
         private static colW = 1;
         static calcEm(w: number, h: number) {
-            this.em = w / 2 / 80
-            this.colW = w / 10;
+            this.em = w / 80
+            this.colW = w / 6;
         }
         static displayDebugInfo(game: Game, delta: number) {
             if (this.debugInfoEnabled) {
@@ -31,8 +31,8 @@ namespace CanvasGame {
 
             game.ctx.fillStyle = "#FFFFFF";
             game.ctx.font = font;
-            game.ctx.fillText("Canvas Game", this.colW * 9, game.ctx.canvas.height - (2 * this.em));
-            game.ctx.fillText("Made by Ákos Nádudvari", this.colW * 9, game.ctx.canvas.height - this.em);
+            game.ctx.fillText("Canvas Game", this.colW * 5, game.ctx.canvas.height - (2 * this.em));
+            game.ctx.fillText("Made by Ákos Nádudvari", this.colW * 5, game.ctx.canvas.height - this.em);
 
             game.ctx.fillText("x", 0, this.em * 2);
             game.ctx.fillText("y", 0, this.em * 3);

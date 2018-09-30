@@ -212,7 +212,7 @@ namespace CanvasGame {
             this.ctx.canvas.width = window.innerWidth;
             this.ctx.canvas.height = window.innerHeight;
             Debug.calcEm(this.ctx.canvas.width, this.ctx.canvas.height);
-            if (window.innerWidth < 768) {
+            if (window.innerHeight < 768 || window.innerWidth < 1024) {
                 this.onScreenControls.enable();
                 $(this.levelEditorToggle).hide();
             } else {
