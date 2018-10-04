@@ -122,8 +122,8 @@ namespace CanvasGame {
             ctx.fillText(name, x, ctx.canvas.height - y - h)
         }
         public static log(message?: any, ...optionalParams: any[]) {
-            if (Debug.debugInfoEnabled) {
-                console.debug(message, optionalParams);
+            if (Debug.debugInfoEnabled && message) {
+                console.debug(`CanvasGame Debug: ${message}`, optionalParams);
             }
         }
     }

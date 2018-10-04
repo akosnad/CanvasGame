@@ -115,7 +115,7 @@ namespace CanvasGame {
             }
 
             this.levelEditor = new LevelEditor(this);
-
+            
             self = this;
             this.levelEditorToggle.addEventListener("click", (e) => {
                 if (self.levelEditor.editorModeEnabled) {
@@ -125,7 +125,7 @@ namespace CanvasGame {
                 }
                 self.updateWindowTitle();
             });
-
+            
             this.background = new Background(level.backgroundImageSource);
             this.player = new Player(this.levelEditor.getPlayerImgSrc(), level.playerXInitial, level.playerYInitial, eval(level.playerLogicFunction));
             this.loadLevel(level);
@@ -200,6 +200,7 @@ namespace CanvasGame {
                 playerLogicFunction = (otherSprites: Array<Sprite>, structures: Array<Structure>) => { };
             }
             this.player = new Player(this.levelEditor.getPlayerImgSrc(), level.playerXInitial, level.playerYInitial, playerLogicFunction);
+            this.levelEditor.loadCharacter();
             this.reset();
             this.levelEditor.updateList();
         }
@@ -232,8 +233,8 @@ namespace CanvasGame {
             this.scrollScreen();
         }
         start() {
-            this.multi.start();
             this.gameLoop();
+            this.multi.start();
         }
         gameLoop() {
             let now = Date.now();

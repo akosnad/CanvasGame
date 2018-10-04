@@ -301,6 +301,17 @@ namespace CanvasGame {
                 $(this.CharacterEditorImgUrl).val(playerImg);
             }
         }
+        loadCharacter() {
+            let playerName = localStorage.getItem("playerName");
+            let playerImg = localStorage.getItem("playerImg");
+
+            if(typeof playerName == "string") {
+                this.game.player.name = playerName;
+            } else {
+                this.game.player.name = "";
+            }
+            this.game.player.setImage(this.getPlayerImgSrc());
+        }
         private updateEditorMenuGeneral() {
             $(this.LEMGeneralLevelId).val(this.game.level.id);
             $(this.LEMGeneralLevelName).val(this.game.level.name);

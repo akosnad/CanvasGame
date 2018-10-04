@@ -45,11 +45,8 @@ namespace CanvasGame {
             var self = this;
             this.connection.on("ReceivePlayerPositionData", (playerPositionDataString) => self.receivePlayerPositionData(playerPositionDataString));
             this.connection.on("ReceivePlayerDescription", (playerDescription) => { self.receivePlayerDescription(playerDescription) });
-            this.connection.on("ReceiveRequestPlayerDescription", (playerId) => {
-                if (playerId == self.playerId) {
-                    self.sendPlayerDescription();
-                }
-            });
+            this.connection.on("ReceiveRequestPlayerDescription", () => { self.sendPlayerDescription(); });
+            this.connection.on("ReceivePlayerDisconnected", (playerId) => { self.receivePlayerDisconnected(playerId); })
         }
         start() {
             var self = this;
@@ -82,7 +79,7 @@ namespace CanvasGame {
                 this.game.player.name,
                 this.game.player.imageSource
             );
-            Debug.log("Got request to send description data: ", data);
+            Debug.log("Sending own description data: ", data);
             this.connection.invoke("SendPlayerDescription", JSON.stringify(data));
         }
         receivePlayerPositionData(playerDataString: string) {
@@ -96,6 +93,7 @@ namespace CanvasGame {
                     player.y = playerData.y;
                     player.levelId = playerData.levelId;
                     player.isPaused = playerData.isPaused;
+                    player.lastUpdateTimestamp = playerData.lastUpdateTimestamp;
                     playerExists = true;
                 }
             });
@@ -111,8 +109,13 @@ namespace CanvasGame {
             let lastRequestDelta = Date.now() - this.lastDescriptionRequest;
             if (lastRequestDelta > 15000) {
                 this.lastDescriptionRequest = Date.now();
+                Debug.log("Requesting player description for ", id);
                 this.connection.invoke("RequestPlayerDescription", id);
             }
+        }
+        receivePlayerDisconnected(playerId: number) {
+            Debug.log("Player disconnected: ", playerId);
+            otherPlayers = otherPlayers.filter(player => {player.playerId != playerId});
         }
         cleanupOldPlayerData() {
             this.lastCleanupTimestamp = Date.now();
