@@ -13,9 +13,9 @@ namespace CanvasGame
         [JsonProperty("playerId")]
         public string Id { get; set; }
         [JsonProperty("playerName")]
-        public string playerName { get; set; }
+        public string Name { get; set; }
         [JsonProperty("playerImageSource")]
-        public string playerImageSource { get; set; }
+        public string ImageSource { get; set; }
     }
 
     public class PlayerPositionData
@@ -25,18 +25,18 @@ namespace CanvasGame
         [JsonProperty("levelId")]
         public string LevelId { get; set; }
         [JsonProperty("x")]
-        public int x { get; set; }
+        public double x { get; set; }
         [JsonProperty("y")]
-        public int y { get; set; }
-        [JsonProperty("lastUpdateTimestamp")]
-        public DateTime LastUpdate { get; set; }
+        public double y { get; set; }
         [JsonProperty("isPaused")]
         public bool IsPaused { get; set; }
+        public DateTime LastUpdate { get; set; }
     }
 
     public class Player
     {
-        public PlayerDescription PlayerDescription { get; set; }
+        public PlayerDescription Description { get; set; }
+        public PlayerPositionData PositionData { get; set; }
         public string ConnectionId { get; set; }
     }
 
@@ -50,36 +50,70 @@ namespace CanvasGame
     {
         public static List<Player> Players = new List<Player>();
         public static List<PlayerDescriptionRequest> PlayerDescriptionRequests = new List<PlayerDescriptionRequest>();
-        public async Task SendPlayerPositionData(string playerPositionData)
+        public async Task SendPlayerPositionData(string playerPositionDataString)
         {
-            await Clients.Others.SendAsync("ReceivePlayerPositionData", playerPositionData);
+            var playerPositionData = JsonConvert.DeserializeObject<PlayerPositionData>(playerPositionDataString);
+            playerPositionData.LastUpdate = DateTime.Now;
+
+            var i = Players.FindIndex(p => p.ConnectionId == Context.ConnectionId);
+            if (i >= 0)
+            {
+                if (Players[i].PositionData != null)
+                {
+                    if (Players[i].PositionData.x == playerPositionData.x
+                    && Players[i].PositionData.y == playerPositionData.y
+                    && Players[i].PositionData.LevelId == playerPositionData.LevelId
+                    && Players[i].PositionData.IsPaused == playerPositionData.IsPaused)
+                    {
+                        if (Players[i].PositionData.LastUpdate <= playerPositionData.LastUpdate.AddSeconds(-5))
+                        {
+                            await Clients.Others.SendAsync("ReceivePlayerPositionData", playerPositionDataString);
+                            Players[i].PositionData.LastUpdate = DateTime.Now;
+                        }
+                    }
+                    else
+                    {
+                        await Clients.Others.SendAsync("ReceivePlayerPositionData", playerPositionDataString);
+                        Players[i].PositionData = playerPositionData;
+                    }
+                }
+                else
+                {
+                        await Clients.Others.SendAsync("ReceivePlayerPositionData", playerPositionDataString);
+                        Players[i].PositionData = playerPositionData;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Unknown player position data received from client: {0}, {1}", Context.ConnectionId, playerPositionData.Id);
+            }
         }
         public async Task SendPlayerDescription(string playerDescriptionString)
         {
             var playerDescription = JsonConvert.DeserializeObject<PlayerDescription>(playerDescriptionString);
             Console.Write("SendPlayerDescription from {0}", playerDescription.Id);
 
-            var i = Players.FindIndex(p => p.PlayerDescription.Id == playerDescription.Id);
+            var i = Players.FindIndex(p => p.Description.Id == playerDescription.Id);
             if (i >= 0)
             {
-                Players[i].PlayerDescription = playerDescription;
+                Players[i].Description = playerDescription;
                 Players[i].ConnectionId = Context.ConnectionId;
             }
             else
             {
                 Players.Add(new Player
                 {
-                    PlayerDescription = playerDescription,
+                    Description = playerDescription,
                     ConnectionId = Context.ConnectionId
                 });
             }
 
             var requests = new List<PlayerDescriptionRequest>();
-            if(PlayerDescriptionRequests.Count > 0)
+            if (PlayerDescriptionRequests.Count > 0)
             {
                 requests.AddRange(PlayerDescriptionRequests.Where(pdr => pdr.TargetPlayerId == playerDescription.Id));
             }
-            if(requests.Count > 0)
+            if (requests.Count > 0)
             {
                 foreach (var request in requests)
                 {
@@ -95,11 +129,11 @@ namespace CanvasGame
         public async Task RequestPlayerDescription(string targetId)
         {
             Console.WriteLine("RequestPlayerDescription from {0} for {1}", Context.ConnectionId, targetId);
-            var targetPlayer = Players.SingleOrDefault(p => p.PlayerDescription.Id == targetId);
+            var targetPlayer = Players.SingleOrDefault(p => p.Description.Id == targetId);
             if (targetPlayer != null)
             {
                 // await Clients.Client(targetPlayer.ConnectionId).SendAsync("ReceiveRequestPlayerDescription");
-                var descriptionString = JsonConvert.SerializeObject(targetPlayer.PlayerDescription);
+                var descriptionString = JsonConvert.SerializeObject(targetPlayer.Description);
                 await Clients.Caller.SendAsync("ReceivePlayerDescription", descriptionString);
             }
             else
@@ -129,7 +163,7 @@ namespace CanvasGame
             Console.WriteLine("Client disconnected: {0}", Context.ConnectionId);
             var toRemove = Players.SingleOrDefault(p => p.ConnectionId == Context.ConnectionId);
             Players.Remove(toRemove);
-            await Clients.All.SendAsync("ReceivePlayerDisconnected", toRemove.PlayerDescription.Id);
+            await Clients.All.SendAsync("ReceivePlayerDisconnected", toRemove.Description.Id);
             await base.OnDisconnectedAsync(exception);
         }
     }

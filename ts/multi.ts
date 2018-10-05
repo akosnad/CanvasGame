@@ -7,14 +7,12 @@ namespace CanvasGame {
         levelId: number
         x: number;
         y: number;
-        lastUpdateTimestamp: number;
         isPaused: boolean;
-        constructor(x: number, y: number, playerId: number, levelId: number, lastUpdateTimestamp: number, isPaused: boolean) {
+        constructor(x: number, y: number, playerId: number, levelId: number, isPaused: boolean) {
             this.playerId = playerId;
             this.levelId = levelId;
             this.x = x;
             this.y = y;
-            this.lastUpdateTimestamp = lastUpdateTimestamp;
             this.isPaused = isPaused;
         }
     }
@@ -84,6 +82,7 @@ namespace CanvasGame {
         }
         receivePlayerPositionData(playerDataString: string) {
             var playerData = <MultiplayerPositionData>JSON.parse(playerDataString);
+            // Debug.log("POS: ", playerData);
             // Don't process own player
             if (playerData.playerId == this.playerId) { return; }
             var playerExists = false;
@@ -93,7 +92,7 @@ namespace CanvasGame {
                     player.y = playerData.y;
                     player.levelId = playerData.levelId;
                     player.isPaused = playerData.isPaused;
-                    player.lastUpdateTimestamp = playerData.lastUpdateTimestamp;
+                    player.lastUpdateTimestamp = Date.now();
                     playerExists = true;
                 }
             });
@@ -102,7 +101,7 @@ namespace CanvasGame {
             }
         }
         sendPlayerPositionData(player: Player, level: Level, isPaused: boolean) {
-            var playerData = JSON.stringify(new MultiplayerPositionData(player.x, player.y, this.playerId, level.id, Date.now(), isPaused));
+            var playerData = JSON.stringify(new MultiplayerPositionData(player.x, player.y, this.playerId, level.id, isPaused));
             this.connection.invoke("SendPlayerPositionData", playerData);
         }
         requestPlayerDescription(id: number) {
