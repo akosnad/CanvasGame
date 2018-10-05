@@ -9,7 +9,7 @@ namespace CanvasGame {
         right = 39,
         up = 38,
         down = 40,
-        modifier = 16
+        modifier = 16 // Shift
     }
 
     class OnScreenControls {
@@ -115,7 +115,7 @@ namespace CanvasGame {
             }
 
             this.levelEditor = new LevelEditor(this);
-            
+
             self = this;
             this.levelEditorToggle.addEventListener("click", (e) => {
                 if (self.levelEditor.editorModeEnabled) {
@@ -125,7 +125,7 @@ namespace CanvasGame {
                 }
                 self.updateWindowTitle();
             });
-            
+
             this.background = new Background(level.backgroundImageSource);
             this.player = new Player(this.levelEditor.getPlayerImgSrc(), level.playerXInitial, level.playerYInitial, eval(level.playerLogicFunction));
             this.loadLevel(level);
@@ -276,17 +276,27 @@ namespace CanvasGame {
                 for (let player of otherPlayers) {
                     if (player.levelId == this.level.id) {
                         player.draw(this.ctx, this.scrollX, this.scrollY);
+                        if (MovingDirections.modifier in this.player.movingDirections) {
+                            this.drawPlayerName(player);
+                        }
                     }
                 }
             }
             // Draw our player
             this.player.draw(this.ctx, this.scrollX, this.scrollY);
         }
-
         private drawStructures() {
             for (let structure of this.structures) {
                 structure.draw(this.ctx, this.scrollX, this.scrollY);
             }
+        }
+        private drawPlayerName(player: OtherPlayer) {
+            this.ctx.font = `${Debug.em}px Roboto`;
+            this.ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
+            this.ctx.fillText(player.name,
+                player.x - this.scrollX,
+                this.ctx.canvas.height - player.y - player.image.height,
+                player.image.width * 3);
         }
 
         scrollScreen() {

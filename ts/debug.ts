@@ -1,8 +1,8 @@
 namespace CanvasGame {
     export class Debug {
         public static debugInfoEnabled = false;
-        private static em = 12;
-        private static colW = 1;
+        public static em = 12;
+        public static colW = 1;
         static calcEm(w: number, h: number) {
             this.em = w / 80
             this.colW = w / 6;
@@ -19,7 +19,6 @@ namespace CanvasGame {
                 for (let player of otherPlayers) {
                     if (player.levelId == game.level.id) {
                         Debug.drawSpriteHitbox(game.ctx, player, "rgba(0, 0, 255, 0.25)", game.scrollX, game.scrollY);
-                        Debug.drawPlayerName(game.ctx, player.x, player.y, player.image.height, player.name);
                     }
                 }
                 Debug.drawSpriteHitbox(game.ctx, game.player, "rgba(255, 0, 0, 0.25)", game.scrollX, game.scrollY);
@@ -117,13 +116,9 @@ namespace CanvasGame {
             ctx.fillStyle = "#FFFFFF";
             ctx.fillRect(x - 2, y - 2, 4, 4);
         }
-        private static drawPlayerName(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, name: string) {
-            ctx.fillStyle = "#FFFFFF";
-            ctx.fillText(name, x, ctx.canvas.height - y - h)
-        }
         public static log(message?: any, ...optionalParams: any[]) {
             if (Debug.debugInfoEnabled && message) {
-                console.debug(`CanvasGame Debug: ${message}`, optionalParams);
+                console.debug(`CanvasGame Debug: ${message}`, ...optionalParams);
             }
         }
     }
