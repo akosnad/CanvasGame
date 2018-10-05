@@ -27,6 +27,7 @@ namespace CanvasGame {
         }
     }
     export class Multiplayer {
+        private isRunning = false;
         private connection: signalR.HubConnection;
         private game: Game;
         private playerId: number;
@@ -45,11 +46,14 @@ namespace CanvasGame {
             this.connection.on("ReceivePlayerDescription", (playerDescription) => { self.receivePlayerDescription(playerDescription) });
             this.connection.on("ReceiveRequestPlayerDescription", () => { self.sendPlayerDescription(); });
             this.connection.on("ReceivePlayerDisconnected", (playerId) => { self.receivePlayerDisconnected(playerId); })
+
+            this.connection.onclose((error) => { self.onclose(error) });
+            setTimeout(() => self.cleanupOldPlayerData(), this.cleanupInterval);
         }
         start() {
+            Debug.log("Starting multiplayer");
             var self = this;
-            setTimeout(() => self.cleanupOldPlayerData(), this.cleanupInterval);
-            this.connection.start().catch(err => console.error(err));
+            this.connection.start().then(() => { self.isRunning = true; }, err => { self.onclose(err) });
         }
         receivePlayerDescription(playerDescriptionString: string) {
             let playerDescription = <MultiplayerDescription>JSON.parse(playerDescriptionString);
@@ -101,8 +105,10 @@ namespace CanvasGame {
             }
         }
         sendPlayerPositionData(player: Player, level: Level, isPaused: boolean) {
-            var playerData = JSON.stringify(new MultiplayerPositionData(player.x, player.y, this.playerId, level.id, isPaused));
-            this.connection.invoke("SendPlayerPositionData", playerData);
+            if (this.isRunning) {
+                var playerData = JSON.stringify(new MultiplayerPositionData(player.x, player.y, this.playerId, level.id, isPaused));
+                this.connection.invoke("SendPlayerPositionData", playerData);
+            }
         }
         requestPlayerDescription(id: number) {
             let lastRequestDelta = Date.now() - this.lastDescriptionRequest;
@@ -114,7 +120,19 @@ namespace CanvasGame {
         }
         receivePlayerDisconnected(playerId: number) {
             Debug.log("Player disconnected: ", playerId);
-            otherPlayers = otherPlayers.filter(player => {player.playerId != playerId});
+            otherPlayers = otherPlayers.filter(player => { player.playerId != playerId });
+        }
+        onclose(error: Error | undefined) {
+            Debug.log("Multiplayer stopped with error: ", error);
+            this.stop();
+            Debug.log("Multiplayer: retrying in 10 seconds...");
+            var self = this;
+            setTimeout(() => { self.start(); }, 10000);
+        }
+        stop() {
+            this.isRunning = false;
+            this.connection.stop();
+            otherPlayers = new Array<OtherPlayer>();
         }
         cleanupOldPlayerData() {
             this.lastCleanupTimestamp = Date.now();
