@@ -318,6 +318,7 @@ namespace CanvasGame {
             if (this.scrollY < 0) {
                 this.scrollY = 0;
             }
+            this.levelEditor.updateScroll();
         }
 
         private tickObjects(delta: number) {

@@ -22,6 +22,9 @@ namespace CanvasGame {
         private LEMNewStructure = <HTMLElement>document.getElementById("editor-new-structure");
         private LEMExport = <HTMLElement>document.getElementById("editor-export");
 
+        private LEMScrollX = <HTMLElement>document.getElementById("screen-scroll-y-input");
+        private LEMScrollY = <HTMLElement>document.getElementById("screen-scroll-x-input");
+
         private LEMList = <HTMLElement>document.getElementById("editor-list");
         private LEMListPlayer = <HTMLElement>document.getElementById("editor-list-player");
         private LEMListSprite = <HTMLElement>document.getElementById("editor-list-sprite");
@@ -73,6 +76,9 @@ namespace CanvasGame {
             var self = this;
 
             $(this.LEMList).hide();
+
+            $(this.LEMScrollX).on("input", () => { this.applyScroll(); })
+            $(this.LEMScrollY).on("input", () => { this.applyScroll(); })
 
             $(this.CharacterEditorMenu).hide();
             this.CharacterEditorDropdown.style.cursor = "pointer";
@@ -305,12 +311,24 @@ namespace CanvasGame {
             let playerName = localStorage.getItem("playerName");
             let playerImg = localStorage.getItem("playerImg");
 
-            if(typeof playerName == "string") {
+            if (typeof playerName == "string") {
                 this.game.player.name = playerName;
             } else {
                 this.game.player.name = "";
             }
             this.game.player.setImage(this.getPlayerImgSrc());
+        }
+        private applyScroll() {
+            let scrollXString = <string>$(this.LEMScrollX).val();
+            let scrollYString = <string>$(this.LEMScrollY).val();
+            this.game.scrollX = parseFloat(scrollXString);
+            this.game.scrollY = parseFloat(scrollYString);
+        }
+        updateScroll() {
+            if (this.editorModeEnabled) {
+                $(this.LEMScrollX).val(this.game.scrollX);
+                $(this.LEMScrollY).val(this.game.scrollY);
+            }
         }
         private updateEditorMenuGeneral() {
             $(this.LEMGeneralLevelId).val(this.game.level.id);
@@ -458,7 +476,9 @@ namespace CanvasGame {
             }
         }
         private scrollScreen() {
-            if (this.editorModeEnabled) {
+            if (this.editorModeEnabled
+                && !$(this.LEMScrollX).is(":focus")
+                && !$(this.LEMScrollY).is(":focus")) {
                 let scrollAmount = 20;
                 if (MovingDirections.down in this.game.player.movingDirections) {
                     this.game.scrollY -= scrollAmount;
@@ -476,6 +496,8 @@ namespace CanvasGame {
                 if (this.game.scrollY < 0) {
                     this.game.scrollY = 0;
                 }
+                $(this.LEMScrollX).val(this.game.scrollX);
+                $(this.LEMScrollY).val(this.game.scrollY);
             }
         }
         private moveObject() {
