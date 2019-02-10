@@ -517,7 +517,8 @@ namespace CanvasGame {
                         if (!$(this.LEMStructurePosX).is(":focus")
                             && !$(this.LEMStructurePosY).is(":focus")
                             && !$(this.LEMStructureWidth).is(":focus")
-                            && !$(this.LEMStructureHeight).is(":focus")) {
+                            && !$(this.LEMStructureHeight).is(":focus")
+                            && !$(this.LEMStructureImgURL).is(":focus")) {
                             if (MovingDirections.secondaryModifier in this.game.player.movingDirections) {
                                 if(this._resizeObject(moveAmount)) {
                                     this.updateEditorMenuStructureSize();
@@ -539,7 +540,8 @@ namespace CanvasGame {
                     } else if (this.selectedObject instanceof LivingSprite) {
                         if (!$(this.LEMLivingSpriteLogic).is(":focus")
                             && !$(this.LEMLivingSpriteInitialPosX).is(":focus")
-                            && !$(this.LEMLivingSpriteInitialPosY).is(":focus")) {
+                            && !$(this.LEMLivingSpriteInitialPosY).is(":focus")
+                            && !$(this.LEMLivingSpriteImgUrl).is(":focus")) {
                             if (this._moveObject(moveAmount)) {
                                 this.selectedObject.xInitial = this.selectedObject.x;
                                 this.selectedObject.yInitial = this.selectedObject.y;
@@ -548,7 +550,8 @@ namespace CanvasGame {
                         }
                     } else if (this.selectedObject instanceof Sprite) {
                         if (!$(this.LEMSpriteInitialPosX).is(":focus")
-                            && !$(this.LEMSpriteInitialPosY).is(":focus")) {
+                            && !$(this.LEMSpriteInitialPosY).is(":focus")
+                            && !$(this.LEMSpriteImgUrl).is(":focus")) {
                             if (this._moveObject(moveAmount)) {
                                 this.selectedObject.xInitial = this.selectedObject.x;
                                 this.selectedObject.yInitial = this.selectedObject.y;
