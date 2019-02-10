@@ -317,6 +317,8 @@ namespace CanvasGame {
         w: number;
         h: number;
         solid = true;
+        patternWidth = 0;
+        patternHeight = 0;
         private image = document.createElement('img');
         imageSource: string;
         private imageReady = false;
@@ -339,7 +341,9 @@ namespace CanvasGame {
         imageLoaded(e: Event) {
             this.imageReady = true;
             let c = <CanvasRenderingContext2D>document.createElement("canvas").getContext('2d');
-            this.pattern = c.createPattern(this.image, "repeat");
+            this.pattern = <CanvasPattern>c.createPattern(this.image, "repeat");
+            this.patternWidth = this.image.width;
+            this.patternHeight = this.image.height;
         }
         reset() {
             this.imageReady = false;

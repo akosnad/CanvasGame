@@ -9,7 +9,8 @@ namespace CanvasGame {
         right = 39,
         up = 38,
         down = 40,
-        modifier = 16 // Shift
+        modifier = 16, // Shift
+        secondaryModifier = 17 // Ctrl
     }
 
     class OnScreenControls {
@@ -78,13 +79,13 @@ namespace CanvasGame {
             window.addEventListener('resize', () => self.resizeCanvas(), false);
             this.resizeCanvas();
             self = this;
-            window.addEventListener('keypress', e => {
+            window.addEventListener('keyup', e => {
                 if (e.code == PauseKeyCode) {
                     self.togglePause();
                 }
             });
             self = this;
-            window.addEventListener('keypress', e => {
+            window.addEventListener('keyup', e => {
                 if (e.code == DebugKeyCode) {
                     Debug.debugInfoEnabled = !Debug.debugInfoEnabled;
                     e.preventDefault();

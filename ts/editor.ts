@@ -441,6 +441,12 @@ namespace CanvasGame {
                 $(this.LEMStructurePosY).val(this.selectedObject.y);
             }
         }
+        private updateEditorMenuStructureSize() {
+            if (this.selectedObject instanceof Structure) {
+                $(this.LEMStructureWidth).val(this.selectedObject.w);
+                $(this.LEMStructureHeight).val(this.selectedObject.h);
+            }
+        }
         private applyEditorMenuStructure() {
             if (this.selectedObject instanceof Structure) {
                 this.selectedObject.imageSource = <string>$(this.LEMStructureImgURL).val();
@@ -509,10 +515,16 @@ namespace CanvasGame {
                     }
                     if (this.selectedObject instanceof Structure) {
                         if (!$(this.LEMStructurePosX).is(":focus")
-                            && !$(this.LEMStructurePosY).is(":focus")) {
-                            if (this._moveObject(moveAmount)) {
-                                this.updateEditorMenuStructurePos();
-                            }
+                            && !$(this.LEMStructurePosY).is(":focus")
+                            && !$(this.LEMStructureWidth).is(":focus")
+                            && !$(this.LEMStructureHeight).is(":focus")) {
+                            if (MovingDirections.secondaryModifier in this.game.player.movingDirections) {
+                                if(this._resizeObject(moveAmount)) {
+                                    this.updateEditorMenuStructureSize();
+                                }
+                            } else if (this._moveObject(moveAmount)) {
+                                    this.updateEditorMenuStructurePos();
+                                }
                         }
                     } else if (this.selectedObject instanceof Player) {
                         if (!$(this.LEMPlayerLogic).is(":focus")
@@ -557,6 +569,19 @@ namespace CanvasGame {
 
                 if (this.selectedObject.x < 0) { this.selectedObject.x = 0; }
                 if (this.selectedObject.y < 0) { this.selectedObject.y = 0; }
+            }
+            return changed;
+        }
+        private _resizeObject(moveAmount: number) {
+            let changed = false;
+            if(this.selectedObject instanceof Structure) {
+                if (MovingDirections.down in this.game.player.movingDirections) { this.selectedObject.h -= moveAmount; changed = true; }
+                if (MovingDirections.up in this.game.player.movingDirections) { this.selectedObject.h += moveAmount; changed = true; }
+                if (MovingDirections.left in this.game.player.movingDirections) { this.selectedObject.w -= moveAmount; changed = true; }
+                if (MovingDirections.right in this.game.player.movingDirections) { this.selectedObject.w += moveAmount; changed = true; }
+
+                if (this.selectedObject.w < this.selectedObject.patternWidth) {this.selectedObject.w = this.selectedObject.patternWidth;}
+                if (this.selectedObject.h < this.selectedObject.patternHeight) {this.selectedObject.h = this.selectedObject.patternHeight;}
             }
             return changed;
         }
