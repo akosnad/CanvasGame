@@ -12,6 +12,18 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "buildRelease",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/CanvasGame.csproj",
+                "--configuration",
+                "Release"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "gulp-watch",
             "isBackground": true,
             "command": "npx gulp watch",
