@@ -30,8 +30,9 @@ namespace CanvasGame {
 
             game.ctx.fillStyle = "#FFFFFF";
             game.ctx.font = font;
-            game.ctx.fillText("Canvas Game", this.colW * 5, game.ctx.canvas.height - (2 * this.em));
-            game.ctx.fillText("Made by Ákos Nádudvari", this.colW * 5, game.ctx.canvas.height - this.em);
+            game.ctx.fillText("Canvas Game", this.colW * 5, game.ctx.canvas.height - (3 * this.em));
+            game.ctx.fillText("Made by Ákos Nádudvari", this.colW * 5, game.ctx.canvas.height - (2 * this.em));
+            game.ctx.fillText("github/akosnad/CanvasGame", this.colW * 5, game.ctx.canvas.height - this.em);
 
             game.ctx.fillText("x", 0, this.em * 2);
             game.ctx.fillText("y", 0, this.em * 3);
