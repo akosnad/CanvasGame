@@ -42,6 +42,15 @@ canvas {
   text-align: center;
 }
 
+.control-modifiers {
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  font-size: 3em;
+  color: rgba(255, 255, 255, 0.3);
+  text-align: center;
+}
+
 /*
  * Animations
 */
