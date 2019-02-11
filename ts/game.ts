@@ -29,14 +29,22 @@ namespace CanvasGame {
             this.resume.style.cursor = "pointer";
 
             this.left.addEventListener("mousedown", () => { game.player.movingDirections[MovingDirections.left] = 1; });
+            this.left.addEventListener("touchstart", () => { game.player.movingDirections[MovingDirections.left] = 1; });
             this.right.addEventListener("mousedown", () => { game.player.movingDirections[MovingDirections.right] = 1; });
+            this.right.addEventListener("touchstart", () => { game.player.movingDirections[MovingDirections.right] = 1; });
             this.up.addEventListener("mousedown", () => { game.player.movingDirections[MovingDirections.up] = 1; });
+            this.up.addEventListener("touchstart", () => { game.player.movingDirections[MovingDirections.up] = 1; });
             this.down.addEventListener("mousedown", () => { game.player.movingDirections[MovingDirections.down] = 1; });
+            this.down.addEventListener("touchstart", () => { game.player.movingDirections[MovingDirections.down] = 1; });
 
             this.left.addEventListener("mouseup", () => { delete game.player.movingDirections[MovingDirections.left]; });
+            this.left.addEventListener("touchend", () => { delete game.player.movingDirections[MovingDirections.left]; });
             this.right.addEventListener("mouseup", () => { delete game.player.movingDirections[MovingDirections.right]; });
+            this.right.addEventListener("touchend", () => { delete game.player.movingDirections[MovingDirections.right]; });
             this.up.addEventListener("mouseup", () => { delete game.player.movingDirections[MovingDirections.up]; });
+            this.up.addEventListener("touchend", () => { delete game.player.movingDirections[MovingDirections.up]; });
             this.down.addEventListener("mouseup", () => { delete game.player.movingDirections[MovingDirections.down]; });
+            this.down.addEventListener("touchend", () => { delete game.player.movingDirections[MovingDirections.down]; });
         }
         enable() {
             $(this.container).show();
