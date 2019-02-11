@@ -17,19 +17,14 @@
     <Exec Command="npm install" />
   </Target>
 
-  <Target Name="CompileTypescript" BeforeTargets="BeforeBuild">
-    <Message Text="Compiling Typescript..." Importance="high"></Message>
-    <Exec Command="npx tsc"/>
+  <Target Name="RunNpmBuildScript" BeforeTargets="BeforeBuild" Condition=" '$(Configuration)' == 'Release' ">
+    <Message Text="Running NPM build script..." Importance="high"></Message>
+    <Exec Command="npm run build"/>
   </Target>
 
-  <Target Name="GulpTask" BeforeTargets="BeforeBuild">
-    <Message Text="Running gulp tasks..." Importance="high"></Message>
-    <Exec Command="npx gulp" />
-  </Target>
-
-  <Target Name="SWPrecache" BeforeTargets="BeforeBuild">
-    <Message Text="Running sw-precache..." Importance="high"></Message>
-    <Exec Command="npx sw-precache --root=wwwroot --config=sw-precache.conf.js" />
+  <Target Name="RunNpmBuildDevScript" BeforeTargets="BeforeBuild" Condition=" '$(Configuration)' == 'Debug' ">
+    <Message Text="Running NPM build script..." Importance="high"></Message>
+    <Exec Command="npm run buildDev"/>
   </Target>
 
 </Project>

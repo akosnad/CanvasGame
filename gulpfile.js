@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var pug = require('gulp-pug');
+var strip = require('gulp-strip-code');
 
 
 gulp.task('watch', function () {
