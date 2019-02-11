@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build:gulp": "npx gulp",
-    "build:strip": "echo 1",
+    "build:gulp": "npx gulp release",
+    "build:gulpDev": "npx gulp dev",
     "build:typescript": "npx tsc",
     "build:sw-precache": "npx sw-precache --root=wwwroot --config=sw-precache.conf.js",
     "build": "npm run build:gulp && npm run build:typescript && npm run build:sw-precache",
-    "buildDev": "npm run build:gulp && npm run build:typescript"
+    "buildDev": "npm run build:gulpDev && npm run build:typescript"
   },
   "devDependencies": {
     "@aspnet/signalr": "^1.0.2",
@@ -18,7 +18,8 @@
     "gulp-pug": "^4.0.1",
     "typescript": "^3.0.1",
     "sw-precache": "^5.2.1",
-    "gulp-strip-code": "^0.1.4"
+    "gulp-strip-code": "^0.1.4",
+    "gulp-rename": "^1.4.0"
   },
   "dependencies": {
     "jquery": "^3.3.1",

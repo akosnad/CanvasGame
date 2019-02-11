@@ -1,11 +1,30 @@
 var gulp = require('gulp');
 var pug = require('gulp-pug');
 var strip = require('gulp-strip-code');
+var rename = require('gulp-rename');
 
 
 gulp.task('watch', function () {
     gulp.watch('./pug/**', gulp.parallel(['build-pug']));
+    gulp.watch('./ts_gen/**', gulp.parallel(['nostrip']));
 })
+
+gulp.task('strip', function() {
+    return gulp.src('./ts_gen/main.ts')
+    .pipe(strip({
+        start_comment: "start-debug",
+        end_comment: "end-debug"
+    }))
+    .pipe(rename('main_generated.ts'))
+    .pipe(gulp.dest('./ts'));
+})
+
+gulp.task('nostrip', function() {
+    return gulp.src('./ts_gen/main.ts')
+    .pipe(rename('main_generated.ts'))
+    .pipe(gulp.dest('./ts'));
+})
+
 
 gulp.task('build-pug', function() {
     return gulp.src('./pug/*.pug')
@@ -41,4 +60,5 @@ gulp.task('copy-dist', function (done) {
     done();
 });
 
-gulp.task('default', gulp.parallel(['build-pug', 'copy-dist']));
+gulp.task('release', gulp.parallel(['build-pug', 'copy-dist', 'strip']));
+gulp.task('dev', gulp.parallel(['build-pug', 'copy-dist', 'nostrip']));
