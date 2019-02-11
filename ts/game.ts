@@ -17,6 +17,7 @@ namespace CanvasGame {
         pause = <HTMLElement>document.getElementById("control-pause");
         resume = <HTMLElement>document.getElementById("control-resume");
         container = <HTMLElement>document.getElementById("controls");
+        modifiers = <HTMLElement>document.getElementById("control-modifiers");
         left = <HTMLElement>document.getElementById("control-left");
         right = <HTMLElement>document.getElementById("control-right");
         up = <HTMLElement>document.getElementById("control-up");
@@ -59,10 +60,12 @@ namespace CanvasGame {
         enable() {
             $(this.container).show();
             $(this.pause).show();
+            $(this.modifiers).show();
         }
         disable() {
             $(this.container).hide();
             $(this.pause).hide();
+            $(this.modifiers).hide();
         }
     }
 
