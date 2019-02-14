@@ -46,6 +46,12 @@ namespace CanvasGame
         public string TargetPlayerId { get; set; }
         public DateTime RequestTimestamp { get; set; }
     }
+
+    public class ChatMessage
+    {
+        public string SenderName { get; set; }
+        public string Message { get; set; }
+    }
     public class GameHub : Hub
     {
         public static List<Player> Players = new List<Player>();
@@ -149,6 +155,15 @@ namespace CanvasGame
                     PlayerDescriptionRequests.Add(request);
                 }
             }
+        }
+
+        public async Task SendChatMessage(string message)
+        {
+            var chatMessage = new ChatMessage();
+            chatMessage.SenderName = Players.Where(p => p.ConnectionId == Context.ConnectionId).First().Description.Name;
+            chatMessage.Message = message;
+            var chatMessageString = JsonConvert.SerializeObject(chatMessage);
+            await Clients.Others.SendAsync("ReceiveChatMessage", chatMessageString);
         }
 
         public override async Task OnConnectedAsync()

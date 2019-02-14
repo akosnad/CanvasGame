@@ -56,6 +56,32 @@ canvas {
   padding: 15px;
 }
 
+.chat {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  margin: 0;
+}
+
+#chat-box {
+  width: 100%;
+  padding: 0;
+  display: none;
+}
+
+#chat-box div div button {
+  margin: 0;
+}
+
+.chat-list-container {
+  overflow-y: scroll;
+}
+
+#chat-box-closed {
+  position: fixed;
+  bottom: 0;
+}
+
 /*
  * Animations
 */

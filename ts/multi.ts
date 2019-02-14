@@ -26,6 +26,14 @@ namespace CanvasGame {
             this.playerImageSource = imgSrc;
         }
     }
+    export class ChatMessage {
+        SenderName: string;
+        Message: string;
+        constructor(senderName: string, message: string) {
+            this.SenderName = senderName;
+            this.Message = message;
+        }
+    }
     export class Multiplayer {
         private isRunning = false;
         private connection: signalR.HubConnection;
@@ -46,6 +54,7 @@ namespace CanvasGame {
             this.connection.on("ReceivePlayerDescription", (playerDescription) => { self.receivePlayerDescription(playerDescription) });
             this.connection.on("ReceiveRequestPlayerDescription", () => { self.sendPlayerDescription(); });
             this.connection.on("ReceivePlayerDisconnected", (playerId) => { self.receivePlayerDisconnected(playerId); })
+            this.connection.on("ReceiveChatMessage", (chatMessage) => { self.receiveChatMessage(chatMessage); })
 
             this.connection.onclose((error) => { self.onclose(error) });
             setTimeout(() => self.cleanupOldPlayerData(), this.cleanupInterval);
@@ -122,6 +131,15 @@ namespace CanvasGame {
             Debug.log("Player disconnected: ", playerId);
             otherPlayers = otherPlayers.filter(player => { player.playerId != playerId });
         }
+        sendChatMessage(message: string) {
+            if (message != "") {
+                this.connection.invoke("SendChatMessage", message);
+            }
+        }
+        receiveChatMessage(chatMessageString: string) {
+            let chatMessage = <ChatMessage>JSON.parse(chatMessageString);
+            this.game.chat.receiveMessage(chatMessage.SenderName, chatMessage.Message);
+        }
         onclose(error: Error | undefined) {
             Debug.log("Multiplayer stopped with error: ", error);
             this.stop();
@@ -144,6 +162,43 @@ namespace CanvasGame {
             });
             var self = this;
             setTimeout(() => self.cleanupOldPlayerData(), this.cleanupInterval);
+        }
+    }
+
+    export class Chat {
+        private chatBox = <HTMLElement>document.getElementById("chat-box");
+        private chatList = <HTMLElement>document.getElementById("chat-list");
+        private sendButton = <HTMLElement>document.getElementById("chat-send");
+        private chatInput = <HTMLElement>document.getElementById("chat-input");
+        private game: Game;
+        constructor(game: Game) {
+            this.game = game;
+            this.sendButton.addEventListener("click", () => { this.sendMessage(); });
+        }
+        public show() {
+            $(this.chatBox).show();
+            $(this.chatBox).addClass("slide-in-blurred-left");
+            $(this.chatBox).removeClass("slide-out-blurred-right");
+        }
+        public hide() {
+            $(this.chatBox).removeClass("slide-in-blurred-left");
+            $(this.chatBox).addClass("slide-out-blurred-right");
+            var self = this;
+            setTimeout(() => { $(self.chatBox).hide(); }, 500);
+        }
+        public receiveMessage(senderUsername: string, message: string) {
+            let listItem = document.createElement('li');
+            listItem.setAttribute("class", "list-group-item");
+            listItem.innerText = `${senderUsername}: ${message}`;
+            this.chatList.appendChild(listItem);
+        }
+        public sendMessage() {
+            let message = $(this.chatInput).val();
+            if(typeof message == "string") {
+                this.game.multi.sendChatMessage(message);
+                this.receiveMessage(this.game.player.name, message);
+                $(this.chatInput).val("");
+            }
         }
     }
 }

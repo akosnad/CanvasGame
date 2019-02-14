@@ -90,6 +90,7 @@ namespace CanvasGame {
         isPaused = false;
         onScreenControls = new OnScreenControls(this);
         multi = new Multiplayer(this);
+        chat = new Chat(this);
         private canvas: HTMLCanvasElement;
         ctx: CanvasRenderingContext2D;
         private pauseIndicator: HTMLElement;
@@ -161,8 +162,10 @@ namespace CanvasGame {
             this.levelEditorToggle.addEventListener("click", (e) => {
                 if (self.levelEditor.editorModeEnabled) {
                     self.levelEditor.disableEditorMode();
+                    self.chat.show();
                 } else {
                     self.levelEditor.enableEditorMode();
+                    self.chat.hide();
                 }
                 self.updateWindowTitle();
             });
@@ -179,12 +182,14 @@ namespace CanvasGame {
                 $(this.pauseIndicator).show();
                 $(this.pauseIndicator).addClass("slide-in-blurred-left");
                 $(this.pauseIndicator).removeClass("slide-out-blurred-right");
+                if(!this.levelEditor.editorModeEnabled) { this.chat.show(); }
             }
             else {
                 $(this.pauseIndicator).removeClass("slide-in-blurred-left");
                 $(this.pauseIndicator).addClass("slide-out-blurred-right");
                 var self = this;
                 setTimeout(() => { $(self.pauseIndicator).hide(); }, 500)
+                this.chat.hide();
             }
         }
 

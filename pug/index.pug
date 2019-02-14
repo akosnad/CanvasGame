@@ -19,6 +19,7 @@ block body
         i.fa.fa-list#control-modifier-secondary
   div.control-pause
     i.fa.fa-pause#control-pause
+
   div.controls#controls
     div.row
       div.col-4
@@ -28,6 +29,15 @@ block body
         i.fa.fa-caret-down#control-down
       div.col-4
         i.fa.fa-caret-right#control-right
+  div.row.align-items-end.chat
+    div.col-lg-4.col-md-8#chat-box
+      div.chat-list-container
+        ul.list-group#chat-list
+      div.input-group
+        input.form-control#chat-input
+        div.input-group-append
+          button.btn.btn-sm.btn-primary#chat-send
+            i.fa.fa-send
   div.row
     div.col-lg-2.col-md-4
       div#level-editor-menu.card.unselectable.game-menu
