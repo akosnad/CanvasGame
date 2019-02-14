@@ -52,6 +52,7 @@ namespace CanvasGame {
         xVelocity = 0;
         yVelocity = 0;
         xVelocityMax = 255;
+        xVelocityMaxWalk = 120;
         xVelocityIncrease = 30;
         xVelocityDecrease = 15;
         gravity = 15;
@@ -84,8 +85,14 @@ namespace CanvasGame {
             if (this.xVelocity > this.xVelocityMax) {
                 this.xVelocity = this.xVelocityMax;
             }
+            if (this.xVelocity > this.xVelocityMaxWalk && MovingDirections.modifier in this.movingDirections) {
+                this.xVelocity = this.xVelocityMaxWalk;
+            }
             if (this.xVelocity < -this.xVelocityMax) {
                 this.xVelocity = -this.xVelocityMax;
+            }
+            if (this.xVelocity < -this.xVelocityMaxWalk && MovingDirections.modifier in this.movingDirections) {
+                this.xVelocity = -this.xVelocityMaxWalk;
             }
             this.x += this.xVelocity * timeDelta;
             if (!this.isStanding) {

@@ -23,7 +23,7 @@ namespace CanvasGame {
         up = <HTMLElement>document.getElementById("control-up");
         down = <HTMLElement>document.getElementById("control-down");
         modifier = <HTMLElement>document.getElementById("control-modifier");
-        // modifierSecondary = <HTMLElement>document.getElementById("control-modifier-secondary");
+        modifierSecondary = <HTMLElement>document.getElementById("control-modifier-secondary");
         enabled = false;
         constructor(game: Game) {
             this.pause.addEventListener("click", () => { game.togglePause(); });
@@ -41,8 +41,8 @@ namespace CanvasGame {
             this.down.addEventListener("touchstart", () => { game.player.movingDirections[MovingDirections.down] = 1; });
             this.modifier.addEventListener("mousedown", () => { game.player.movingDirections[MovingDirections.modifier] = 1; });
             this.modifier.addEventListener("touchstart", () => { game.player.movingDirections[MovingDirections.modifier] = 1; });
-            // this.modifierSecondary.addEventListener("mousedown", () => { game.player.movingDirections[MovingDirections.secondaryModifier] = 1; });
-            // this.modifierSecondary.addEventListener("touchstart", () => { game.player.movingDirections[MovingDirections.secondaryModifier] = 1; });
+            this.modifierSecondary.addEventListener("mousedown", () => { game.player.movingDirections[MovingDirections.secondaryModifier] = 1; });
+            this.modifierSecondary.addEventListener("touchstart", () => { game.player.movingDirections[MovingDirections.secondaryModifier] = 1; });
 
             this.left.addEventListener("mouseup", () => { delete game.player.movingDirections[MovingDirections.left]; });
             this.left.addEventListener("touchend", () => { delete game.player.movingDirections[MovingDirections.left]; });
@@ -54,8 +54,8 @@ namespace CanvasGame {
             this.down.addEventListener("touchend", () => { delete game.player.movingDirections[MovingDirections.down]; });
             this.modifier.addEventListener("mouseup", () => { delete game.player.movingDirections[MovingDirections.modifier]; });
             this.modifier.addEventListener("touchend", () => { delete game.player.movingDirections[MovingDirections.modifier]; });
-            // this.modifierSecondary.addEventListener("mouseup", () => { delete game.player.movingDirections[MovingDirections.secondaryModifier]; });
-            // this.modifierSecondary.addEventListener("touchend", () => { delete game.player.movingDirections[MovingDirections.secondaryModifier]; });
+            this.modifierSecondary.addEventListener("mouseup", () => { delete game.player.movingDirections[MovingDirections.secondaryModifier]; });
+            this.modifierSecondary.addEventListener("touchend", () => { delete game.player.movingDirections[MovingDirections.secondaryModifier]; });
         }
         enable() {
             $(this.container).show();
@@ -298,7 +298,7 @@ namespace CanvasGame {
                 for (let player of otherPlayers) {
                     if (player.levelId == this.level.id) {
                         player.draw(this.ctx, this.scrollX, this.scrollY);
-                        if (MovingDirections.modifier in this.player.movingDirections) {
+                        if (MovingDirections.secondaryModifier in this.player.movingDirections) {
                             this.drawPlayerName(player);
                         }
                     }
