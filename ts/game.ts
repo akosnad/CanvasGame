@@ -16,7 +16,7 @@ namespace CanvasGame {
     class OnScreenControls {
         pause = <HTMLElement>document.getElementById("control-pause");
         resume = <HTMLElement>document.getElementById("control-resume");
-        container = <HTMLElement>document.getElementById("controls");
+        controls = <HTMLElement>document.getElementById("controls");
         modifiers = <HTMLElement>document.getElementById("control-modifiers");
         left = <HTMLElement>document.getElementById("control-left");
         right = <HTMLElement>document.getElementById("control-right");
@@ -24,7 +24,7 @@ namespace CanvasGame {
         down = <HTMLElement>document.getElementById("control-down");
         modifier = <HTMLElement>document.getElementById("control-modifier");
         modifierSecondary = <HTMLElement>document.getElementById("control-modifier-secondary");
-        enabled = false;
+        enabled = true;
         constructor(game: Game) {
             this.pause.addEventListener("click", () => { game.togglePause(); });
             this.pause.style.cursor = "pointer";
@@ -58,14 +58,20 @@ namespace CanvasGame {
             this.modifierSecondary.addEventListener("touchend", () => { delete game.player.movingDirections[MovingDirections.secondaryModifier]; });
         }
         enable() {
-            $(this.container).show();
-            $(this.pause).show();
-            $(this.modifiers).show();
+            if(!this.enabled) {
+                $(this.controls).show();
+                $(this.pause).show();
+                $(this.modifiers).show();
+                this.enabled = true;
+            }
         }
         disable() {
-            $(this.container).hide();
-            $(this.pause).hide();
-            $(this.modifiers).hide();
+            if(this.enabled) {
+                $(this.controls).hide();
+                $(this.pause).hide();
+                $(this.modifiers).hide();
+                this.enabled = false;
+            }
         }
     }
 
@@ -117,6 +123,19 @@ namespace CanvasGame {
                 self.mouseX = e.x;
                 self.mouseY = e.y;
             });
+
+            window.addEventListener('keydown', () => {
+                this.onScreenControls.disable();
+            });
+            window.addEventListener('touchstart', () => {
+                this.onScreenControls.enable();
+            });
+            if (window.innerHeight < 768 || window.innerWidth < 1024) {
+                this.onScreenControls.enable();
+            } else {
+                this.onScreenControls.disable();
+            }
+
 
             this.pauseIndicator = <HTMLElement>document.getElementById("pause-indicator");
             $(this.pauseIndicator).hide();
@@ -236,10 +255,8 @@ namespace CanvasGame {
             this.ctx.canvas.height = window.innerHeight;
             Debug.calcEm(this.ctx.canvas.width, this.ctx.canvas.height);
             if (window.innerHeight < 768 || window.innerWidth < 1024) {
-                this.onScreenControls.enable();
                 $(this.levelEditorToggle).hide();
             } else {
-                this.onScreenControls.disable();
                 $(this.levelEditorToggle).show();
             }
         }
