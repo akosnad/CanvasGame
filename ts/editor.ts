@@ -591,21 +591,21 @@ namespace CanvasGame {
         selectObjectByPos(xRelative: number, yRelative: number) {
             let previousSelectedObject = this.selectedObject;
             let x = this.game.scrollX + xRelative;
-            let y = this.game.ctx.canvas.height - (this.game.scrollY + yRelative);
+            let y = this.game.scrollY + (this.game.ctx.canvas.height - yRelative);
             for (let structure of this.game.structures) {
-                if (structure.x < x && structure.x + structure.w > x &&
-                    structure.y < y && structure.y + structure.h > y) {
+                if (structure.x <= x && structure.x + structure.w >= x &&
+                    structure.y <= y && structure.y + structure.h >= y) {
                     this.selectedObject = structure;
                 }
             }
             for (let sprite of this.game.sprites) {
-                if (sprite.x < x && sprite.x + sprite.image.width > x &&
-                    sprite.y < y && sprite.y + sprite.image.height > y) {
+                if (sprite.x <= x && sprite.x + sprite.image.width >= x &&
+                    sprite.y <= y && sprite.y + sprite.image.height >= y) {
                     this.selectedObject = sprite;
                 }
             }
-            if (this.game.player.x < x && this.game.player.x + this.game.player.image.width > x &&
-                this.game.player.y < y && this.game.player.y + this.game.player.image.height > y) {
+            if (this.game.player.x <= x && this.game.player.x + this.game.player.image.width >= x &&
+                this.game.player.y <= y && this.game.player.y + this.game.player.image.height >= y) {
                 this.selectedObject = this.game.player;
             }
 

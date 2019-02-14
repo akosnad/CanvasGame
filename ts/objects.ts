@@ -358,7 +358,7 @@ namespace CanvasGame {
             if (this.imageReady && typeof this.pattern != "undefined") {
                 (<CanvasPattern>this.pattern).setTransform(this.matrix.translate(
                     this.x - offsetX,
-                    ctx.canvas.height - this.y - this.h + offsetY
+                    ctx.canvas.height - this.y + offsetY
                 ));
                 ctx.fillStyle = <CanvasPattern>this.pattern;
                 ctx.fillRect(
