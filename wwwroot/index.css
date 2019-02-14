@@ -51,6 +51,11 @@ canvas {
   text-align: center;
 }
 
+.game-menu {
+  display: none;
+  padding: 15px;
+}
+
 /*
  * Animations
 */

@@ -13,7 +13,7 @@ block body
   div.control-modifiers#control-modifiers
     div.row
       div.col-4
-        i.fa.fa-running#control-modifier
+        i.fa.fa-arrow-circle-down#control-modifier
     div.row
       div.col-4
         i.fa.fa-list#control-modifier-secondary
@@ -30,7 +30,7 @@ block body
         i.fa.fa-caret-right#control-right
   div.row
     div.col-lg-2.col-md-4
-      div#level-editor-menu.card.unselectable(style='display:none;padding:15px')
+      div#level-editor-menu.card.unselectable.game-menu
         h4.card-title Level Editor Menu
         div.card-subtitle
           button#editor-export.btn.btn-sm.btn-indigo Export level
@@ -76,8 +76,8 @@ block body
 
     div.col
 
-    div.col-lg-2.col-md-4
-      div#pause-indicator.card.unselectable(style="display:none;padding:15px")
+    div.col-lg-2.col-md-4.col-sm-12
+      div#pause-indicator.card.unselectable.game-menu
         h2.card-title Canvas Game
         div.card-subtitle
             h4
