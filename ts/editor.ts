@@ -278,6 +278,14 @@ namespace CanvasGame {
                 return result;
             } else { return "/img/hero.png"; }
         }
+        getPlayerName() {
+            let result = localStorage.getItem("playerName");
+            if (typeof result == "string" && result != "") {
+                return result;
+            } else {
+                return `Anonymous${Math.abs(Date.now() << 128)}`;
+            }
+        }
         private applyCharacterEditor() {
             let playerName = $(this.CharacterEditorName).val();
             let playerImg = $(this.CharacterEditorImgUrl).val();
@@ -293,14 +301,10 @@ namespace CanvasGame {
             this.game.multi.sendPlayerDescription();
         }
         private updateCharacterEditor() {
-            let playerName = localStorage.getItem("playerName");
             let playerImg = localStorage.getItem("playerImg");
 
-            if (playerName == null) {
-                $(this.CharacterEditorName).val("");
-            } else {
-                $(this.CharacterEditorName).val(playerName);
-            }
+            $(this.CharacterEditorName).val(this.getPlayerName());
+
             if (playerImg == null) {
                 $(this.CharacterEditorImgUrl).val("");
             } else {
@@ -308,15 +312,9 @@ namespace CanvasGame {
             }
         }
         loadCharacter() {
-            let playerName = localStorage.getItem("playerName");
-            let playerImg = localStorage.getItem("playerImg");
-
-            if (typeof playerName == "string") {
-                this.game.player.name = playerName;
-            } else {
-                this.game.player.name = "";
-            }
+            this.game.player.name = this.getPlayerName();
             this.game.player.setImage(this.getPlayerImgSrc());
+
         }
         private applyScroll() {
             let scrollXString = <string>$(this.LEMScrollX).val();
@@ -520,12 +518,12 @@ namespace CanvasGame {
                             && !$(this.LEMStructureHeight).is(":focus")
                             && !$(this.LEMStructureImgURL).is(":focus")) {
                             if (MovingDirections.secondaryModifier in this.game.player.movingDirections) {
-                                if(this._resizeObject(moveAmount)) {
+                                if (this._resizeObject(moveAmount)) {
                                     this.updateEditorMenuStructureSize();
                                 }
                             } else if (this._moveObject(moveAmount)) {
-                                    this.updateEditorMenuStructurePos();
-                                }
+                                this.updateEditorMenuStructurePos();
+                            }
                         }
                     } else if (this.selectedObject instanceof Player) {
                         if (!$(this.LEMPlayerLogic).is(":focus")
@@ -577,14 +575,14 @@ namespace CanvasGame {
         }
         private _resizeObject(moveAmount: number) {
             let changed = false;
-            if(this.selectedObject instanceof Structure) {
+            if (this.selectedObject instanceof Structure) {
                 if (MovingDirections.down in this.game.player.movingDirections) { this.selectedObject.h -= moveAmount; changed = true; }
                 if (MovingDirections.up in this.game.player.movingDirections) { this.selectedObject.h += moveAmount; changed = true; }
                 if (MovingDirections.left in this.game.player.movingDirections) { this.selectedObject.w -= moveAmount; changed = true; }
                 if (MovingDirections.right in this.game.player.movingDirections) { this.selectedObject.w += moveAmount; changed = true; }
 
-                if (this.selectedObject.w < this.selectedObject.patternWidth) {this.selectedObject.w = this.selectedObject.patternWidth;}
-                if (this.selectedObject.h < this.selectedObject.patternHeight) {this.selectedObject.h = this.selectedObject.patternHeight;}
+                if (this.selectedObject.w < this.selectedObject.patternWidth) { this.selectedObject.w = this.selectedObject.patternWidth; }
+                if (this.selectedObject.h < this.selectedObject.patternHeight) { this.selectedObject.h = this.selectedObject.patternHeight; }
             }
             return changed;
         }
